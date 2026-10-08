@@ -1,0 +1,171 @@
+/* ============================================
+   Smart Leave Infographic Styles
+   (Matching Infographic Image Layout)
+   ============================================ */
+
+.infographic-wrapper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 32px 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header */
+.infographic-header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+
+.infographic-main-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.6px;
+  font-family: 'Inter', sans-serif;
+}
+
+.infographic-title-underline {
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #0284c7, #7c3aed);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+/* Canvas & Path Layout */
+.infographic-canvas {
+  position: relative;
+  min-height: 380px;
+  padding: 10px 0;
+}
+
+.snake-path-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.infographic-nodes-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+  height: 360px;
+}
+
+.infographic-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.infographic-col--top {
+  justify-content: flex-start;
+}
+
+.infographic-col--bottom {
+  justify-content: flex-end;
+}
+
+/* Card Styling matching the infographic icons & titles */
+.infographic-card {
+  background: #ffffff;
+  border: 2.5px solid var(--theme-color);
+  border-radius: 20px;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+  position: relative;
+  min-height: 180px;
+}
+
+.infographic-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.08);
+  background: var(--theme-bg);
+}
+
+.infographic-card--active {
+  background: var(--theme-bg) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12) !important;
+  transform: translateY(-4px);
+}
+
+.infographic-card__icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--theme-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  border: 1px solid var(--theme-color);
+  transition: transform .2s ease;
+}
+
+.infographic-card:hover .infographic-card__icon-box {
+  transform: scale(1.1);
+}
+
+.infographic-card__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+  margin-bottom: 6px;
+  font-family: 'Inter', sans-serif;
+}
+
+.infographic-card__hover-desc {
+  font-size: 10.5px;
+  color: #64748b;
+  line-height: 1.3;
+  margin-top: 4px;
+}
+
+.infographic-card__step-num {
+  position: absolute;
+  top: 8px; right: 10px;
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--theme-color);
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+/* Responsive fallback */
+@media (max-width: 1200px) {
+  .infographic-nodes-grid {
+    grid-template-columns: repeat(4, 1fr);
+    height: auto;
+    gap: 20px;
+  }
+  .infographic-col--bottom,
+  .infographic-col--top {
+    justify-content: flex-start;
+  }
+  .snake-path-svg {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .infographic-nodes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

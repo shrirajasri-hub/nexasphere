@@ -1,0 +1,34 @@
+/* ============================================
+   App Shell Layout
+   ============================================ */
+
+.app-shell {
+  --current-sidebar-w: var(--sidebar-w, 240px);
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-shell--collapsed {
+  --current-sidebar-w: 64px;
+}
+
+.app-main {
+  margin-left: var(--current-sidebar-w, 240px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left .25s ease;
+  min-width: 0;
+}
+
+.app-shell--collapsed .app-main,
+.app-main--collapsed {
+  margin-left: 64px !important;
+}
+
+.app-content {
+  margin-top: var(--header-h);
+  padding: 24px;
+  min-height: calc(100vh - var(--header-h));
+  background: var(--gray-50);
+}
