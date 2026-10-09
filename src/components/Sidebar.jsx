@@ -13,7 +13,7 @@ const EMPLOYEE_NAV = [
   { icon: LayoutDashboard, label: 'My Dashboard',        to: '/dashboard' },
   { icon: CalendarDays,    label: 'Apply Leave',         to: '/leave', badge: 'Apply' },
   { icon: Clock,           label: 'My Attendance',       to: '/attendance' },
-  { icon: FolderKanban,    label: 'My Deliverables',     to: '/projects' },
+  { icon: FolderKanban,    label: 'My Projects',         to: '/projects' },
   { icon: CheckSquare,     label: 'My Tasks',            to: '/tasks' },
   { icon: User,            label: 'My Profile',          to: '/profile' },
   { icon: Bell,            label: 'Notifications',       to: '/notifications', badge: 3 },

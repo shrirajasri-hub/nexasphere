@@ -11,7 +11,7 @@ const PAGE_TITLES = {
   '/employees':          { title: 'Employees',        sub: 'Manage your global workforce' },
   '/attendance':         { title: 'Attendance',       sub: 'Check in/out, monthly calendar and daily log' },
   '/leave':              { title: 'Leave Management', sub: 'Submit leave requests, voice dictation & approvals' },
-  '/projects':           { title: 'Deliverables',     sub: 'Track work items, progress and due dates' },
+  '/projects':           { title: 'My Projects',      sub: 'Track project milestones, tasks and progress' },
   '/tasks':              { title: 'Tasks',            sub: 'Manage and assign cross-functional team tasks' },
   '/timesheets':         { title: 'Timesheets',       sub: 'Review and approve project timesheets' },
   '/reports':            { title: 'Reports & MIS',    sub: 'Executive analytics and workforce insights' },

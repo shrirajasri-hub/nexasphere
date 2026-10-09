@@ -334,10 +334,10 @@ export default function Dashboard() {
           <div className="dash-card">
             <div className="dash-card__header">
               <div>
-                <h3 className="dash-card__title">My Active Project Deliverables</h3>
-                <p className="dash-card__sub">Deliverables assigned to Priya Sundaram</p>
+                <h3 className="dash-card__title">My Active Projects</h3>
+                <p className="dash-card__sub">Projects and tasks assigned to Priya Sundaram</p>
               </div>
-              <Link to="/projects" className="dash-link-btn">View My Tasks →</Link>
+              <Link to="/projects" className="dash-link-btn">View My Projects →</Link>
             </div>
 
             <div className="ph-list">

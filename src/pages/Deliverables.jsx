@@ -92,7 +92,7 @@ export default function Deliverables() {
     persist([item, ...items]);
     setShowNew(false);
     setForm({ title: '', project: '', due: '', priority: 'Medium' });
-    flash('Deliverable added');
+    flash('Project added');
   };
 
   return (
@@ -100,7 +100,7 @@ export default function Deliverables() {
       {toast && <div className="dl-toast"><CheckCircle2 size={16} color="#10b981" /> {toast}</div>}
 
       <div className="dl-stats">
-        <Stat icon={FolderKanban} label={isEmployee ? 'My Deliverables' : 'All Deliverables'} val={total} color="#2563eb" bg="#eff6ff" />
+        <Stat icon={FolderKanban} label={isEmployee ? 'My Projects' : 'All Projects'} val={total} color="#2563eb" bg="#eff6ff" />
         <Stat icon={Clock} label="In Progress / Review" val={inProg} color="#f59e0b" bg="#fffbeb" />
         <Stat icon={CheckCircle2} label="Completed" val={done} color="#10b981" bg="#ecfdf5" />
         <Stat icon={AlertTriangle} label="Overdue" val={overdue} color="#ef4444" bg="#fef2f2" />
@@ -115,9 +115,9 @@ export default function Deliverables() {
           </div>
           <div className="dl-tools-right">
             <div className="dl-search"><Search size={14} />
-              <input placeholder="Search deliverable or project" value={q} onChange={e => setQ(e.target.value)} />
+              <input placeholder="Search project or task" value={q} onChange={e => setQ(e.target.value)} />
             </div>
-            {isEmployee && <button className="dl-btn" onClick={() => setShowNew(true)}><Plus size={14} /> Add Deliverable</button>}
+            {isEmployee && <button className="dl-btn" onClick={() => setShowNew(true)}><Plus size={14} /> Add Project Item</button>}
           </div>
         </div>
 
@@ -125,12 +125,12 @@ export default function Deliverables() {
           <table className="dl-table">
             <thead>
               <tr>
-                <th>Deliverable</th>{!isEmployee && <th>Owner</th>}<th>Project</th><th>Due</th>
+                <th>Project Task</th>{!isEmployee && <th>Owner</th>}<th>Project</th><th>Due</th>
                 <th>Priority</th><th>Progress</th><th>Status</th><th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {list.length === 0 && <tr><td colSpan={8} className="dl-empty">No deliverables match this view.</td></tr>}
+              {list.length === 0 && <tr><td colSpan={8} className="dl-empty">No projects match this view.</td></tr>}
               {list.map(d => (
                 <tr key={d.id}>
                   <td><div className="dl-title">{d.title}</div><div className="dl-id">{d.id}</div></td>
@@ -203,7 +203,7 @@ export default function Deliverables() {
       {showNew && (
         <div className="dl-overlay" onClick={() => setShowNew(false)}>
           <form className="dl-modal" onClick={e => e.stopPropagation()} onSubmit={createItem}>
-            <div className="dl-modal-head"><div><h3>Add Deliverable</h3><p>Track a new work item assigned to you.</p></div>
+            <div className="dl-modal-head"><div><h3>Add Project Task</h3><p>Track a new project deliverable or task assigned to you.</p></div>
               <button type="button" className="dl-x" onClick={() => setShowNew(false)}><X size={18} /></button></div>
             <div className="dl-modal-body">
               <label className="dl-lbl">Title *</label>
@@ -218,7 +218,7 @@ export default function Deliverables() {
                     {PRIORITIES.map(p => <option key={p}>{p}</option>)}
                   </select></div>
               </div>
-              <div className="dl-foot"><button type="submit" className="dl-btn">Save Deliverable</button></div>
+              <div className="dl-foot"><button type="submit" className="dl-btn">Save Project Item</button></div>
             </div>
           </form>
         </div>

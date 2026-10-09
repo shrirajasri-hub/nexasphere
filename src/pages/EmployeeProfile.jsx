@@ -594,7 +594,7 @@ export default function EmployeeProfile() {
             <CheckSquare size={18} />
           </div>
           <div className="vital-info">
-            <p className="vital-label">Active Deliverables</p>
+            <p className="vital-label">Active Projects</p>
             <h3 className="vital-number">{profile.activeTasks || 4} <span className="vital-sub">In Progress</span></h3>
             <span className="vital-note">{profile.deliverablesCompleted || 14} Tasks Delivered YTD</span>
           </div>
