@@ -236,7 +236,7 @@
 /* ─── Grid Top Row ─── */
 .dash-grid-top {
   display: grid;
-  grid-template-columns: 320px 1.8fr 1.2fr;
+  grid-template-columns: minmax(260px, 290px) minmax(320px, 1.8fr) minmax(220px, 1.1fr);
   gap: 18px;
   align-items: stretch;
 }
@@ -247,6 +247,7 @@
 }
 .dash-card--flow .dash-chart-area {
   flex: 1;
+  width: 100%;
   min-height: 170px;
 }
 
@@ -359,11 +360,18 @@
 }
 
 /* Card 3: Gauge Widget */
+.dash-card--gauge {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 .gauge-wrap {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
+  min-height: 130px;
 }
 .gauge-chart-box {
   position: relative;
@@ -394,7 +402,7 @@
   text-align: center;
   border-top: 1px solid #f1f5f9;
   padding-top: 10px;
-  margin-top: 6px;
+  margin-top: auto;
 }
 
 /* ─── Grid Middle Row ─── */
@@ -402,6 +410,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
+  align-items: stretch;
 }
 
 /* Department Blocks (Vivid Card Blocks) */
@@ -523,6 +532,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
+  align-items: stretch;
 }
 
 /* Team Leave List */
@@ -582,16 +592,30 @@
 .activity-time { font-size: 10.5px; color: #94a3b8; font-weight: 500; }
 
 /* Responsive adjustments */
-@media (max-width: 1280px) {
+@media (max-width: 1080px) {
   .dash-grid-top {
     grid-template-columns: 1fr 1fr;
   }
+  .dash-hero-card {
+    order: 1;
+  }
+  .dash-card--gauge {
+    order: 2;
+  }
+  .dash-card--flow {
+    order: 3;
+    grid-column: 1 / -1;
+  }
 }
-@media (max-width: 900px) {
+
+@media (max-width: 768px) {
   .dash-grid-top,
   .dash-grid-mid,
   .dash-grid-bottom {
     grid-template-columns: 1fr;
+  }
+  .dash-card--flow {
+    grid-column: 1;
   }
   .dept-blocks-row {
     grid-template-columns: 1fr 1fr;
