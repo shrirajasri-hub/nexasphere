@@ -3,9 +3,85 @@ import {
   Calendar, Plus, Filter, Download,
   FileText, Send, Users, Mic, MicOff,
   UploadCloud, Paperclip, Trash2, CheckCircle2,
-  Clock, User, X, Volume2, Sparkles, Eye
+  Clock, User, X, Volume2, Sparkles, Eye,
+  PhoneCall, FileCheck2, AlertTriangle, Lock, ShieldAlert
 } from 'lucide-react';
 import './LeaveManagement.css';
+
+const ALL_STAFF_MEMBERS = [
+  { empId: 'EMP-2041', name: 'Priya Sundaram', dept: 'Design & UX', manager: 'Vikram Malhotra (VP Tech)' },
+  { empId: 'EMP00101', name: 'Aarav Sharma', dept: 'Engineering', manager: 'Vikram Malhotra (VP Tech)' },
+  { empId: 'EMP00102', name: 'Priya Patel', dept: 'HR', manager: 'Sarah Jenkins (Director HR)' },
+  { empId: 'EMP-1082', name: 'Arun Kumar', dept: 'Production', manager: 'Karthik Raja (Plant Head)' },
+  { empId: 'EMP-3012', name: 'Meena Ramesh', dept: 'Quality Assurance', manager: 'Senthil Nathan (QA Head)' },
+  { empId: 'EMP-2098', name: 'Vignesh M.', dept: 'Maintenance', manager: 'Suresh Babu (Operations)' }
+];
+
+const INITIAL_REQUESTS = [
+  {
+    id: 'LR-2026-104',
+    employeeName: 'Priya Sundaram',
+    empId: 'EMP-2041',
+    department: 'Design & UX',
+    leaveType: 'Sick Leave (SL)',
+    duration: 'Full Day',
+    dates: '14 Oct 2026 - 15 Oct 2026',
+    fromDate: '2026-10-14',
+    toDate: '2026-10-15',
+    days: 2,
+    reason: 'Severe viral throat infection and fever, doctor advised 2 days rest.',
+    manager: 'Sarah Jenkins (Director of Eng)',
+    handoverTo: 'Arun Kumar',
+    emergencyPhone: '+91 98401 23456',
+    attachmentName: 'Medical_Prescription.pdf',
+    attachmentSize: '512 KB',
+    status: 'Pending Approval',
+    submittedOn: '07 Oct 2026',
+    regularised: true
+  },
+  {
+    id: 'LR-2026-092',
+    employeeName: 'Priya Sundaram',
+    empId: 'EMP-2041',
+    department: 'Design & UX',
+    leaveType: 'Casual Leave (CL)',
+    duration: 'Full Day',
+    dates: '26 Sep 2026 - 28 Sep 2026',
+    fromDate: '2026-09-26',
+    toDate: '2026-09-28',
+    days: 3,
+    reason: 'Attending family wedding reception in hometown.',
+    manager: 'Sarah Jenkins (Director of Eng)',
+    handoverTo: 'Arun Kumar',
+    emergencyPhone: '+91 98401 23456',
+    attachmentName: 'Wedding_Invite.pdf',
+    attachmentSize: '310 KB',
+    status: 'Approved',
+    submittedOn: '20 Sep 2026',
+    regularised: true
+  },
+  {
+    id: 'LR-2026-089',
+    employeeName: 'Elena Rostova',
+    empId: 'EMP-4421',
+    department: 'Product & Design',
+    leaveType: 'Earned Leave (EL)',
+    duration: 'Full Day',
+    dates: '12 Oct 2026 - 15 Oct 2026',
+    fromDate: '2026-10-12',
+    toDate: '2026-10-15',
+    days: 4,
+    reason: 'Annual family vacation approved during sprint planning.',
+    manager: 'Sarah Jenkins',
+    handoverTo: 'Marcus Vance',
+    emergencyPhone: '+1 (555) 382-9912',
+    attachmentName: 'Travel_Itinerary.pdf',
+    attachmentSize: '420 KB',
+    status: 'Approved',
+    submittedOn: '04 Oct 2026',
+    regularised: true
+  }
+];
 
 const INITIAL_BALANCES = [
   { id: 'cl', label: 'Casual Leave (CL)', allocated: 12, used: 4, color: '#2563eb' },
@@ -63,63 +139,55 @@ export default function LeaveManagement() {
   });
 
   const [balances, setBalances] = useState(INITIAL_BALANCES);
-  const [submittedRequests, setSubmittedRequests] = useState([
-    {
-      id: 'LR-2026-104',
-      employeeName: 'Priya Sundaram',
-      empId: 'EMP-2041',
-      department: 'Design & UX',
-      leaveType: 'Sick Leave (SL)',
-      duration: 'Full Day',
-      dates: '14 Oct 2026 - 15 Oct 2026',
-      days: 2,
-      reason: 'Severe viral throat infection and fever, doctor advised 2 days rest.',
-      manager: 'Sarah Jenkins (Director of Eng)',
-      handoverTo: 'Arun Kumar',
-      emergencyPhone: '+91 98401 23456',
-      attachmentName: 'Medical_Prescription.pdf',
-      attachmentSize: '512 KB',
-      status: 'Pending Approval',
-      submittedOn: '07 Oct 2026'
-    },
-    {
-      id: 'LR-2026-092',
-      employeeName: 'Priya Sundaram',
-      empId: 'EMP-2041',
-      department: 'Design & UX',
-      leaveType: 'Casual Leave (CL)',
-      duration: 'Full Day',
-      dates: '26 Sep 2026 - 28 Sep 2026',
-      days: 3,
-      reason: 'Attending family wedding reception in hometown.',
-      manager: 'Sarah Jenkins (Director of Eng)',
-      handoverTo: 'Arun Kumar',
-      emergencyPhone: '+91 98401 23456',
-      attachmentName: 'Wedding_Invite.pdf',
-      attachmentSize: '310 KB',
-      status: 'Approved',
-      submittedOn: '20 Sep 2026'
-    },
-    {
-      id: 'LR-2026-089',
-      employeeName: 'Elena Rostova',
-      empId: 'EMP-4421',
-      department: 'Product & Design',
-      leaveType: 'Earned Leave (EL)',
-      duration: 'Full Day',
-      dates: '12 Oct 2026 - 15 Oct 2026',
-      days: 4,
-      reason: 'Annual family vacation approved during sprint planning.',
-      manager: 'Sarah Jenkins',
-      handoverTo: 'Marcus Vance',
-      emergencyPhone: '+1 (555) 382-9912',
-      attachmentName: 'Travel_Itinerary.pdf',
-      attachmentSize: '420 KB',
-      status: 'Approved',
-      submittedOn: '04 Oct 2026'
-    }
-  ]);
 
+  // Load from persistent localStorage or seed
+  const [submittedRequests, setSubmittedRequests] = useState(() => {
+    try {
+      const saved = localStorage.getItem('nexa_leave_requests');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return INITIAL_REQUESTS;
+  });
+
+  const persistRequests = (next) => {
+    setSubmittedRequests(next);
+    try {
+      localStorage.setItem('nexa_leave_requests', JSON.stringify(next));
+      window.dispatchEvent(new Event('nexa_leave_updated'));
+    } catch (e) {
+      console.warn('Failed to persist leave requests', e);
+    }
+  };
+
+  // Listen to cross-tab or cross-component leave updates
+  useEffect(() => {
+    const handleLeaveSync = () => {
+      try {
+        const saved = localStorage.getItem('nexa_leave_requests');
+        if (saved) setSubmittedRequests(JSON.parse(saved));
+      } catch {}
+    };
+    window.addEventListener('nexa_leave_updated', handleLeaveSync);
+    return () => window.removeEventListener('nexa_leave_updated', handleLeaveSync);
+  }, []);
+
+  // Manager On-Behalf Emergency Block Modal State
+  const [showBlockModal, setShowBlockModal] = useState(false);
+  const [blockEmpId, setBlockEmpId] = useState('EMP-2041');
+  const [blockLeaveType, setBlockLeaveType] = useState('Sick Leave (SL)');
+  const [blockDuration, setBlockDuration] = useState('Full Day');
+  const [blockFromDate, setBlockFromDate] = useState('2026-10-16');
+  const [blockToDate, setBlockToDate] = useState('2026-10-17');
+  const [blockNote, setBlockNote] = useState('Employee called via phone citing emergency outside office premises. Dates reserved pending employee regularisation with medical proof upon return.');
+
+  // Employee Regularisation Modal State
+  const [regularisingRequest, setRegularisingRequest] = useState(null);
+  const [regReason, setRegReason] = useState('');
+  const [regHandover, setRegHandover] = useState('Arun Kumar');
+  const [regEmergencyPhone, setRegEmergencyPhone] = useState('+91 98450 67890');
+  const [regAttachment, setRegAttachment] = useState(null);
   // Form State initialized with logged-in user details
   const [employeeName, setEmployeeName] = useState(currentUser.name || 'Priya Sundaram');
   const [employeeId, setEmployeeId] = useState(currentUser.empId || 'EMP-2041');
@@ -339,13 +407,16 @@ export default function LeaveManagement() {
       manager: reportingManager,
       handoverTo,
       emergencyPhone,
+      fromDate,
+      toDate,
       attachmentName: attachment ? attachment.name : null,
       attachmentSize: attachment ? attachment.size : null,
       status: 'Pending Approval',
-      submittedOn: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      submittedOn: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      regularised: true
     };
 
-    setSubmittedRequests([newReq, ...submittedRequests]);
+    persistRequests([newReq, ...submittedRequests]);
 
     // Update balance preview
     setBalances(prev => prev.map(b => {
@@ -373,7 +444,7 @@ export default function LeaveManagement() {
     const target = submittedRequests.find(r => r.id === reqId);
     if (!target) return;
     if (window.confirm(`Are you sure you want to withdraw leave request ${reqId}?`)) {
-      setSubmittedRequests(prev => prev.filter(r => r.id !== reqId));
+      persistRequests(submittedRequests.filter(r => r.id !== reqId));
       setBalances(prev => prev.map(b => {
         if (target.leaveType.toLowerCase().includes(b.id)) {
           return { ...b, used: Math.max(0, b.used - target.days) };
@@ -387,14 +458,14 @@ export default function LeaveManagement() {
   };
 
   const handleApprove = (reqId) => {
-    setSubmittedRequests(prev => prev.map(r => r.id === reqId ? { ...r, status: 'Approved' } : r));
+    persistRequests(submittedRequests.map(r => r.id === reqId ? { ...r, status: 'Approved' } : r));
     setToastMessage(`Leave request ${reqId} has been approved.`);
     setTimeout(() => setToastMessage(''), 3500);
   };
 
   const handleReject = (reqId) => {
     const target = submittedRequests.find(r => r.id === reqId);
-    setSubmittedRequests(prev => prev.map(r => r.id === reqId ? { ...r, status: 'Rejected' } : r));
+    persistRequests(submittedRequests.map(r => r.id === reqId ? { ...r, status: 'Rejected' } : r));
     if (target) {
       setBalances(prev => prev.map(b => {
         if (target.leaveType.toLowerCase().includes(b.id)) {
@@ -407,12 +478,139 @@ export default function LeaveManagement() {
     setTimeout(() => setToastMessage(''), 3500);
   };
 
+  // ─── Manager On-Behalf Emergency Leave Blocking Handler ───
+  const handleManagerBlockLeave = (e) => {
+    e.preventDefault();
+    const staff = ALL_STAFF_MEMBERS.find(s => s.empId === blockEmpId) || ALL_STAFF_MEMBERS[0];
+    const start = new Date(blockFromDate);
+    const end = new Date(blockToDate);
+    const diff = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1;
+    const daysCount = blockDuration.includes('Half') ? 0.5 : (isNaN(diff) ? 1 : diff);
+
+    const newBlockedReq = {
+      id: `LR-2026-BLK${Math.floor(100 + Math.random() * 900)}`,
+      employeeName: staff.name,
+      empId: staff.empId,
+      department: staff.dept,
+      leaveType: blockLeaveType,
+      duration: blockDuration,
+      dates: blockFromDate === blockToDate ? blockFromDate : `${blockFromDate} to ${blockToDate}`,
+      fromDate: blockFromDate,
+      toDate: blockToDate,
+      days: daysCount,
+      reason: `[Emergency Call Intake]: ${blockNote}`,
+      manager: currentUser.name || staff.manager || 'Reporting Manager',
+      handoverTo: 'Pending Employee Regularisation',
+      emergencyPhone: 'Reported via Phone Call',
+      attachmentName: null,
+      attachmentSize: null,
+      status: 'Dates Blocked (Pending Regularisation)',
+      isManagerBlocked: true,
+      blockedBy: currentUser.name || 'Reporting Manager',
+      blockedOn: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      regularised: false
+    };
+
+    persistRequests([newBlockedReq, ...submittedRequests]);
+    setShowBlockModal(false);
+    setToastMessage(`Emergency leave dates successfully blocked for ${staff.name} (${staff.empId})! The employee will be prompted to regularise upon returning to office.`);
+    setTimeout(() => setToastMessage(''), 6000);
+  };
+
+  // ─── Employee Regularisation Handlers ───
+  const handleOpenRegularise = (req) => {
+    setRegularisingRequest(req);
+    setRegReason('');
+    setRegHandover('Arun Kumar');
+    setRegEmergencyPhone('+91 98450 67890');
+    setRegAttachment(null);
+  };
+
+  const handleRegFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size exceeds the 10MB limit.');
+        return;
+      }
+      setRegAttachment({
+        name: file.name,
+        size: `${(file.size / 1024).toFixed(1)} KB`
+      });
+    }
+  };
+
+  const toggleRegListening = () => {
+    if (!speechSupported) {
+      const sample = 'Suffering from severe acute migraine and throat infection. Attended medical clinic and attached prescription.';
+      setRegReason(prev => (prev ? `${prev.trim()} ${sample}` : sample));
+      setToastMessage('Simulated speech transcription converted successfully!');
+      setTimeout(() => setToastMessage(''), 3000);
+      return;
+    }
+    if (isListening) {
+      if (recognitionRef.current) recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      try {
+        if (recognitionRef.current) {
+          recognitionRef.current.onresult = (event) => {
+            let finalTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript + ' ';
+            }
+            if (finalTranscript) {
+              setRegReason(prev => (prev ? `${prev.trim()} ${finalTranscript.trim()}` : finalTranscript.trim()));
+            }
+          };
+          recognitionRef.current.start();
+          setIsListening(true);
+        }
+      } catch (err) {
+        console.warn('Speech recognition error:', err);
+      }
+    }
+  };
+
+  const handleSubmitRegularisation = (e) => {
+    e.preventDefault();
+    if (!regReason.trim()) {
+      alert('Please state the reason for your emergency leave.');
+      return;
+    }
+    const updated = submittedRequests.map(r => {
+      if (r.id === regularisingRequest.id) {
+        return {
+          ...r,
+          status: 'Approved (Regularised)',
+          reason: regReason.trim(),
+          handoverTo: regHandover,
+          emergencyPhone: regEmergencyPhone,
+          attachmentName: regAttachment ? regAttachment.name : (r.attachmentName || null),
+          attachmentSize: regAttachment ? regAttachment.size : (r.attachmentSize || null),
+          regularised: true,
+          regularisedOn: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+        };
+      }
+      return r;
+    });
+
+    persistRequests(updated);
+    setRegularisingRequest(null);
+    setToastMessage(`Leave request ${regularisingRequest.id} has been regularised successfully with reason and proof documents!`);
+    setTimeout(() => setToastMessage(''), 6000);
+  };
+
   const isEmployee = currentUser?.role === 'employee';
 
   const myRequests = submittedRequests.filter(req =>
     req.empId === currentUser?.empId ||
     req.employeeName.toLowerCase().includes('priya') ||
     (currentUser?.name && req.employeeName.toLowerCase().includes(currentUser.name.toLowerCase().split(' ')[0]))
+  );
+
+  const pendingBlockedRequests = myRequests.filter(req =>
+    req.status === 'Dates Blocked (Pending Regularisation)' && !req.regularised
   );
 
   const displayedRequests = isEmployee
@@ -437,12 +635,49 @@ export default function LeaveManagement() {
           <p className="leave-sub">Configure leave policies, view real-time balances, and manage workforce requests</p>
         </div>
         <div className="leave-header-actions">
+          {!isEmployee && (
+            <button
+              type="button"
+              className="leave-btn-block-manager"
+              onClick={() => setShowBlockModal(true)}
+              title="Block leave dates on behalf of an employee who called with an emergency outside office premises"
+            >
+              <PhoneCall size={14} /> Block Leave for Employee (Emergency Call)
+            </button>
+          )}
           <button className="leave-btn-outline"><Download size={14} /> Export Policy</button>
           <button className="leave-btn-primary" onClick={() => setShowApplyForm(prev => !prev)}>
             <Plus size={15} /> {showApplyForm ? 'Close Form' : 'Apply for Leave'}
           </button>
         </div>
       </div>
+
+      {/* ─── Emergency Blocked Leave Alert Banner for Employee ─── */}
+      {isEmployee && pendingBlockedRequests.length > 0 && (
+        <div className="leave-blocked-alert-banner">
+          <div className="blocked-alert-content">
+            <div className="blocked-alert-icon">
+              <PhoneCall size={22} color="#b45309" />
+            </div>
+            <div>
+              <div className="blocked-alert-badge">Action Required · Emergency Leave Regularisation</div>
+              <h4 className="blocked-alert-title">
+                Manager Reserved Dates: {pendingBlockedRequests[0].dates} ({pendingBlockedRequests[0].days} {pendingBlockedRequests[0].days === 1 ? 'Day' : 'Days'}) — {pendingBlockedRequests[0].leaveType}
+              </h4>
+              <p className="blocked-alert-desc">
+                Your reporting manager reserved these emergency dates following your phone call outside office premises. Now that you are in office, please complete your application with your reason (voice/text) and upload supporting proof documents.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn-regularise-banner"
+            onClick={() => handleOpenRegularise(pendingBlockedRequests[0])}
+          >
+            <FileCheck2 size={15} /> Regularise Leave & Submit Proof
+          </button>
+        </div>
+      )}
 
       {/* ─── Enhanced Enterprise Leave Application Form ─── */}
       {showApplyForm && (
@@ -949,15 +1184,26 @@ export default function LeaveManagement() {
                     </td>
                     <td>
                       <span className={`status-pill ${
-                        req.status === 'Approved' ? 'status-approved' :
+                        req.status === 'Approved' || req.status === 'Approved (Regularised)' ? 'status-approved' :
+                        req.status === 'Dates Blocked (Pending Regularisation)' ? 'status-blocked' :
                         req.status === 'Pending Approval' ? 'status-pending' : 'status-rejected'
                       }`}>
-                        {req.status}
+                        {req.status === 'Dates Blocked (Pending Regularisation)' ? '⚠️ Blocked (Action Req.)' : req.status}
                       </span>
                     </td>
                     <td>
                       {isEmployee ? (
                         <div className="action-row">
+                          {req.status === 'Dates Blocked (Pending Regularisation)' && !req.regularised && (
+                            <button
+                              type="button"
+                              className="btn-regularise-table"
+                              onClick={() => handleOpenRegularise(req)}
+                              title="Submit reason and documents to regularise this leave"
+                            >
+                              <FileCheck2 size={12} /> Regularise
+                            </button>
+                          )}
                           <button
                             type="button"
                             className="btn-view-details"
@@ -979,6 +1225,11 @@ export default function LeaveManagement() {
                         </div>
                       ) : (
                         <div className="action-row">
+                          {req.status === 'Dates Blocked (Pending Regularisation)' && (
+                            <span className="manager-blocked-tag" title="Dates were reserved via emergency phone call intake">
+                              <PhoneCall size={11} /> Blocked via Call
+                            </span>
+                          )}
                           {req.status === 'Pending Approval' ? (
                             <>
                               <button
@@ -1018,6 +1269,285 @@ export default function LeaveManagement() {
           </table>
         </div>
       </div>
+
+      {/* ─── Manager On-Behalf Emergency Block Modal ─── */}
+      {showBlockModal && (
+        <div className="leave-modal-backdrop" onClick={() => setShowBlockModal(false)}>
+          <div className="leave-block-modal" onClick={e => e.stopPropagation()}>
+            <div className="leave-block-header">
+              <div className="leave-block-icon-wrap">
+                <PhoneCall size={20} color="#b45309" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 className="leave-block-title">Block Emergency Leave for Employee</h3>
+                <p className="leave-block-sub">
+                  Record emergency leave on behalf of an employee who phoned in outside office premises.
+                </p>
+              </div>
+              <button className="leave-modal-close" onClick={() => setShowBlockModal(false)}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="leave-block-notice">
+              <ShieldAlert size={16} />
+              <span>
+                <strong>Office-Premise Offline Guard:</strong> Dates will be blocked immediately in system attendance and team roster. When the employee returns to the office, they must regularise this entry with their reason and medical/proof documents.
+              </span>
+            </div>
+
+            <form onSubmit={handleManagerBlockLeave} className="leave-block-form">
+              <div className="leave-block-grid">
+                <div className="leave-field">
+                  <label className="leave-label">Select Employee *</label>
+                  <select
+                    className="leave-input"
+                    value={blockEmpId}
+                    onChange={e => setBlockEmpId(e.target.value)}
+                    required
+                  >
+                    {ALL_STAFF_MEMBERS.map(staff => (
+                      <option key={staff.empId} value={staff.empId}>
+                        {staff.name} ({staff.empId}) — {staff.dept}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="leave-field">
+                  <label className="leave-label">Leave Classification *</label>
+                  <select
+                    className="leave-input"
+                    value={blockLeaveType}
+                    onChange={e => setBlockLeaveType(e.target.value)}
+                    required
+                  >
+                    <option value="Sick Leave (SL)">Sick Leave (SL) — Emergency / Medical</option>
+                    <option value="Casual Leave (CL)">Casual Leave (CL) — Family / Urgent</option>
+                    <option value="Unplanned Leave">Unplanned / Special Emergency Leave</option>
+                  </select>
+                </div>
+
+                <div className="leave-field">
+                  <label className="leave-label">From Date *</label>
+                  <input
+                    type="date"
+                    className="leave-input"
+                    value={blockFromDate}
+                    onChange={e => setBlockFromDate(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="leave-field">
+                  <label className="leave-label">To Date *</label>
+                  <input
+                    type="date"
+                    className="leave-input"
+                    value={blockToDate}
+                    onChange={e => setBlockToDate(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="leave-field">
+                  <label className="leave-label">Duration Mode</label>
+                  <select
+                    className="leave-input"
+                    value={blockDuration}
+                    onChange={e => setBlockDuration(e.target.value)}
+                  >
+                    <option value="Full Day">Full Day</option>
+                    <option value="Half Day (First Half)">Half Day (First Half)</option>
+                    <option value="Half Day (Second Half)">Half Day (Second Half)</option>
+                  </select>
+                </div>
+
+                <div className="leave-field">
+                  <label className="leave-label">Authorized By (Manager)</label>
+                  <input
+                    type="text"
+                    className="leave-input"
+                    value={currentUser.name || 'Reporting Manager'}
+                    readOnly
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <div className="leave-field" style={{ marginTop: 14 }}>
+                <label className="leave-label">Emergency Phone Call Log / Manager's Notes *</label>
+                <textarea
+                  className="leave-input leave-textarea"
+                  rows={3}
+                  value={blockNote}
+                  onChange={e => setBlockNote(e.target.value)}
+                  placeholder="Record what the employee stated over the emergency phone call..."
+                  required
+                />
+              </div>
+
+              <div className="leave-modal-footer">
+                <button
+                  type="button"
+                  className="dash-btn-ghost"
+                  onClick={() => setShowBlockModal(false)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="leave-btn-primary" style={{ background: '#d97706' }}>
+                  <Lock size={14} /> Block Leave Dates for Employee
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Employee Regularise Leave Modal ─── */}
+      {regularisingRequest && (
+        <div className="leave-modal-backdrop" onClick={() => setRegularisingRequest(null)}>
+          <div className="leave-regularise-modal" onClick={e => e.stopPropagation()}>
+            <div className="leave-regularise-header">
+              <div className="leave-reg-icon-wrap">
+                <FileCheck2 size={20} color="#059669" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 className="leave-block-title">Regularise Emergency Leave Application</h3>
+                <p className="leave-block-sub">
+                  Ref ID: <strong>{regularisingRequest.id}</strong> · Blocked by {regularisingRequest.blockedBy || regularisingRequest.manager} on {regularisingRequest.blockedOn || 'phone call'}
+                </p>
+              </div>
+              <button className="leave-modal-close" onClick={() => setRegularisingRequest(null)}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="reg-summary-pill-bar">
+              <span><strong>Dates:</strong> {regularisingRequest.dates}</span>
+              <span><strong>Duration:</strong> {regularisingRequest.days} {regularisingRequest.days === 1 ? 'Day' : 'Days'} ({regularisingRequest.duration})</span>
+              <span><strong>Type:</strong> {regularisingRequest.leaveType}</span>
+            </div>
+
+            <form onSubmit={handleSubmitRegularisation} className="leave-reg-form">
+              <div className="leave-field">
+                <div className="reason-label-row">
+                  <label className="leave-label">Formal Reason for Absence *</label>
+                  <button
+                    type="button"
+                    className={`voice-mic-btn ${isListening ? 'voice-mic-btn--active' : ''}`}
+                    onClick={toggleRegListening}
+                    title="Speak to dictate reason via microphone"
+                  >
+                    {isListening ? <MicOff size={13} /> : <Mic size={13} />}
+                    <span>{isListening ? 'Listening...' : 'Voice Mic'}</span>
+                  </button>
+                </div>
+                <textarea
+                  className="leave-input leave-textarea"
+                  rows={3}
+                  value={regReason}
+                  onChange={e => setRegReason(e.target.value)}
+                  placeholder="State why you took emergency leave (type or click Voice Mic to speak)..."
+                  required
+                />
+                <div className="preset-reasons" style={{ marginTop: 6 }}>
+                  <span className="preset-label">Quick Presets:</span>
+                  {PRESET_REASONS.slice(0, 3).map((pr, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className="preset-chip"
+                      onClick={() => setRegReason(prev => (prev ? `${prev} ${pr}` : pr))}
+                    >
+                      {pr}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="leave-grid-2" style={{ marginTop: 14 }}>
+                <div className="leave-field">
+                  <label className="leave-label">Work Handover Colleague *</label>
+                  <input
+                    type="text"
+                    className="leave-input"
+                    value={regHandover}
+                    onChange={e => setRegHandover(e.target.value)}
+                    placeholder="e.g. Arun Kumar"
+                    required
+                  />
+                </div>
+                <div className="leave-field">
+                  <label className="leave-label">Emergency Phone Contact *</label>
+                  <input
+                    type="tel"
+                    className="leave-input"
+                    value={regEmergencyPhone}
+                    onChange={e => setRegEmergencyPhone(e.target.value)}
+                    placeholder="+91 98450 XXXXX"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Supporting Documents / Medical Proof Upload */}
+              <div className="leave-field" style={{ marginTop: 14 }}>
+                <label className="leave-label">Upload Supporting Proof / Medical Document</label>
+                <p className="reg-hint-text">
+                  Attach medical prescription, doctor certificate, hospital slip, or proof ticket (PDF, PNG, JPG max 10MB).
+                </p>
+                {regAttachment ? (
+                  <div className="reg-attachment-card">
+                    <Paperclip size={16} color="#0284c7" />
+                    <div className="reg-attachment-meta">
+                      <span className="reg-attachment-name">{regAttachment.name}</span>
+                      <span className="reg-attachment-size">{regAttachment.size}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="reg-attachment-remove"
+                      onClick={() => setRegAttachment(null)}
+                      title="Remove attachment"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="reg-file-upload-box">
+                    <UploadCloud size={20} color="#64748b" />
+                    <div>
+                      <label htmlFor="reg-doc-input" className="reg-upload-link">
+                        Choose file
+                      </label>{' '}
+                      <span>or drag and drop here</span>
+                    </div>
+                    <input
+                      id="reg-doc-input"
+                      type="file"
+                      style={{ display: 'none' }}
+                      onChange={handleRegFileChange}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="leave-modal-footer" style={{ marginTop: 20 }}>
+                <button
+                  type="button"
+                  className="dash-btn-ghost"
+                  onClick={() => setRegularisingRequest(null)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="leave-btn-primary" style={{ background: '#059669' }}>
+                  <FileCheck2 size={15} /> Complete & Regularise Leave
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* ─── View Request Details Modal ─── */}
       {selectedRequest && (
