@@ -423,7 +423,7 @@ a.dash-link-btn {
 /* Pulse dot */
 .dash-v2__pulse {
   background: var(--t-accent, #10b981) !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--t-accent, #10b981) 20%, transparent) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22) !important;
 }
 
 /* Apply leave button in dashboard */
@@ -478,7 +478,7 @@ a.dash-link-btn {
 /* Search focus */
 .dl-search:focus-within {
   border-color: var(--t-primary, #2563eb) !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--t-primary, #2563eb) 15%, transparent) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
 }
 
 /* ─────────────────────────────────────────────
@@ -505,7 +505,7 @@ select:focus,
 textarea:focus {
   outline: none !important;
   border-color: var(--t-primary, #2563eb) !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--t-primary, #2563eb) 15%, transparent) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
 }
 
 /* ─────────────────────────────────────────────
@@ -538,3 +538,107 @@ textarea:focus {
 .header__avatar {
   /* keeps role-based color */
 }
+
+/* ─────────────────────────────────────────────
+   ATTENDANCE — Punch Banner gradient follows theme
+   ───────────────────────────────────────────── */
+.att-punch {
+  background: linear-gradient(135deg, var(--t-sidebar-bg, #0f2b5c), var(--t-btn-primary-bg, #1d4ed8)) !important;
+}
+
+/* Today cell in calendar — filled with theme primary */
+.att-c-today {
+  background: var(--t-btn-primary-bg, #162b57) !important;
+  color: #fff !important;
+  border-color: var(--t-btn-primary-bg, #162b57) !important;
+}
+
+/* ─────────────────────────────────────────────
+   PROJECTS — Progress bar and Update/View button
+   ───────────────────────────────────────────── */
+.dl-bar div {
+  background: var(--t-primary, #2563eb) !important;
+}
+.dl-link {
+  color: var(--t-primary, #2563eb) !important;
+  border-color: var(--t-primary, #2563eb) !important;
+}
+.dl-link:hover {
+  background: var(--t-primary-light, #eff6ff) !important;
+}
+
+/* ─────────────────────────────────────────────
+   LEAVE — Apply form card top section
+   ───────────────────────────────────────────── */
+.leave-apply-card {
+  border-top: 3px solid var(--t-primary, #2563eb) !important;
+}
+
+/* Status-specific overrides remain — only primary action color follows theme */
+
+/* ─────────────────────────────────────────────
+   HEADER search focus follows theme
+   ───────────────────────────────────────────── */
+.header__search-input:focus {
+  border-color: var(--t-primary, #3b6bc7) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10) !important;
+}
+.header__pill:hover,
+.header__icon-btn:hover,
+.header__profile:hover {
+  border-color: var(--t-primary, #3b6bc7) !important;
+}
+
+/* ─────────────────────────────────────────────
+   ATTENDANCE — Stat today pill
+   ───────────────────────────────────────────── */
+.att-today {
+  background: var(--t-primary-light, #eff6ff) !important;
+  color: var(--t-primary-text, #1e40af) !important;
+}
+
+/* ─────────────────────────────────────────────
+   PER-THEME FOCUS RING COLOURS (replaces generic rgba)
+   ───────────────────────────────────────────── */
+[data-theme="forest"] input:focus,
+[data-theme="forest"] select:focus,
+[data-theme="forest"] textarea:focus {
+  border-color: #16a34a !important;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12) !important;
+}
+[data-theme="purple"] input:focus,
+[data-theme="purple"] select:focus,
+[data-theme="purple"] textarea:focus {
+  border-color: #7c3aed !important;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12) !important;
+}
+[data-theme="crimson"] input:focus,
+[data-theme="crimson"] select:focus,
+[data-theme="crimson"] textarea:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+}
+[data-theme="slate"] input:focus,
+[data-theme="slate"] select:focus,
+[data-theme="slate"] textarea:focus {
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12) !important;
+}
+
+/* ─────────────────────────────────────────────
+   ATTENDANCE PUNCH — Per-theme gradient overrides
+   ───────────────────────────────────────────── */
+[data-theme="forest"]  .att-punch { background: linear-gradient(135deg, #0c2d1e, #15803d) !important; }
+[data-theme="purple"]  .att-punch { background: linear-gradient(135deg, #1e1045, #6d28d9) !important; }
+[data-theme="crimson"] .att-punch { background: linear-gradient(135deg, #1a0a0a, #b91c1c) !important; }
+[data-theme="slate"]   .att-punch { background: linear-gradient(135deg, #0f172a, #0369a1) !important; }
+[data-theme="white"]   .att-punch { background: linear-gradient(135deg, #162b57, #2563eb) !important; }
+
+/* ─────────────────────────────────────────────
+   DASHBOARD HERO CARD — Per-theme gradients
+   ───────────────────────────────────────────── */
+[data-theme="forest"]  .dash-hero-card { background: linear-gradient(145deg, #0c2d1e 0%, #15803d 100%) !important; }
+[data-theme="purple"]  .dash-hero-card { background: linear-gradient(145deg, #1e1045 0%, #6d28d9 100%) !important; }
+[data-theme="crimson"] .dash-hero-card { background: linear-gradient(145deg, #1a0a0a 0%, #b91c1c 100%) !important; }
+[data-theme="slate"]   .dash-hero-card { background: linear-gradient(145deg, #0f172a 0%, #0369a1 100%) !important; }
+[data-theme="white"]   .dash-hero-card { background: linear-gradient(145deg, #162b57 0%, #1e3a6e 100%) !important; }

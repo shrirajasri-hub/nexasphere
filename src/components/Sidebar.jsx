@@ -97,19 +97,7 @@ export default function Sidebar({ collapsed }) {
 
       {/* Role Tag when expanded */}
       {!collapsed && (
-        <div style={{
-          padding: '6px 14px',
-          margin: '0 12px 10px',
-          borderRadius: 8,
-          background: isEmployee ? 'rgba(14, 165, 233, 0.12)' : 'rgba(37, 99, 235, 0.12)',
-          border: `1px solid ${isEmployee ? 'rgba(14, 165, 233, 0.25)' : 'rgba(37, 99, 235, 0.25)'}`,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 7,
-          fontSize: 11,
-          color: isEmployee ? '#38bdf8' : '#60a5fa',
-          fontWeight: 600
-        }}>
+        <div className={`sidebar__role-tag ${isLightSidebar ? 'sidebar__role-tag--light' : ''}`}>
           <UserCheck size={13} />
           <span>{isEmployee ? 'Employee Self-Service' : 'Enterprise Admin'}</span>
         </div>

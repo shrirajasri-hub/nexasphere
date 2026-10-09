@@ -185,3 +185,25 @@
   border-radius: 20px;
   border: 1px solid rgba(255,255,255,.08);
 }
+
+/* ── Role Tag ── */
+.sidebar__role-tag {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  margin: 0 12px 10px;
+  border-radius: 8px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  font-size: 11px;
+  font-weight: 600;
+  color: #38bdf8;
+}
+
+/* White theme — readable dark text */
+.sidebar__role-tag--light {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #334155 !important;
+}
