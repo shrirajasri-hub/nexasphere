@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Logo from './Logo';
+import SidebarThemePicker from './SidebarThemePicker';
 import './Sidebar.css';
 
 const EMPLOYEE_NAV = [
@@ -180,7 +181,9 @@ export default function Sidebar({ collapsed }) {
         })}
       </nav>
 
-      {/* Footer */}
+      {/* Theme Picker + Footer */}
+      <SidebarThemePicker collapsed={collapsed} />
+
       {!collapsed && (
         <div className="sidebar__footer">
           <div className="sidebar__footer-tag">
