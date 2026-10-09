@@ -4,7 +4,8 @@ import {
   FileText, Send, Users, Mic, MicOff,
   UploadCloud, Paperclip, Trash2, CheckCircle2,
   Clock, User, X, Volume2, Sparkles, Eye,
-  PhoneCall, FileCheck2, AlertTriangle, Lock, ShieldAlert
+  PhoneCall, FileCheck2, AlertTriangle, Lock, ShieldAlert,
+  ArrowLeft
 } from 'lucide-react';
 import './LeaveManagement.css';
 
@@ -631,29 +632,48 @@ export default function LeaveManagement() {
       {/* ─── Page Header ─── */}
       <div className="leave-header">
         <div>
-          <h1 className="leave-title">Leave Management System</h1>
-          <p className="leave-sub">Configure leave policies, view real-time balances, and manage workforce requests</p>
+          <h1 className="leave-title">
+            {showApplyForm ? 'Apply for Leave' : 'Leave Management System'}
+          </h1>
+          <p className="leave-sub">
+            {showApplyForm
+              ? 'Complete the form below to submit a new leave request application'
+              : 'Configure leave policies, view real-time balances, and manage workforce requests'
+            }
+          </p>
         </div>
         <div className="leave-header-actions">
-          {!isEmployee && (
+          {showApplyForm ? (
             <button
               type="button"
-              className="leave-btn-block-manager"
-              onClick={() => setShowBlockModal(true)}
-              title="Block leave dates on behalf of an employee who called with an emergency outside office premises"
+              className="leave-btn-outline"
+              onClick={() => setShowApplyForm(false)}
             >
-              <PhoneCall size={14} /> Block Leave for Employee (Emergency Call)
+              <ArrowLeft size={14} /> Back to Leave History
             </button>
+          ) : (
+            <>
+              {!isEmployee && (
+                <button
+                  type="button"
+                  className="leave-btn-block-manager"
+                  onClick={() => setShowBlockModal(true)}
+                  title="Block leave dates on behalf of an employee who called with an emergency outside office premises"
+                >
+                  <PhoneCall size={14} /> Block Leave for Employee (Emergency Call)
+                </button>
+              )}
+              <button className="leave-btn-outline"><Download size={14} /> Export Policy</button>
+              <button className="leave-btn-primary" onClick={() => setShowApplyForm(true)}>
+                <Plus size={15} /> Apply for Leave
+              </button>
+            </>
           )}
-          <button className="leave-btn-outline"><Download size={14} /> Export Policy</button>
-          <button className="leave-btn-primary" onClick={() => setShowApplyForm(prev => !prev)}>
-            <Plus size={15} /> {showApplyForm ? 'Close Form' : 'Apply for Leave'}
-          </button>
         </div>
       </div>
 
       {/* ─── Emergency Blocked Leave Alert Banner for Employee ─── */}
-      {isEmployee && pendingBlockedRequests.length > 0 && (
+      {!showApplyForm && isEmployee && pendingBlockedRequests.length > 0 && (
         <div className="leave-blocked-alert-banner">
           <div className="blocked-alert-content">
             <div className="blocked-alert-icon">
@@ -684,14 +704,24 @@ export default function LeaveManagement() {
         <div className="leave-apply-card">
           <div className="leave-apply-header">
             <div className="leave-apply-header-left">
-              <div className="leave-icon-badge">
-                <Calendar size={18} />
-              </div>
-              <div>
-                <h3 className="leave-apply-title">New Leave Request Application</h3>
-                <p className="leave-apply-sub">
-                  Complete the required fields below. You can <strong>type</strong> your reason or click the <strong>microphone</strong> to speak and convert voice into text.
-                </p>
+              <button
+                type="button"
+                className="btn-back-breadcrumb"
+                onClick={() => setShowApplyForm(false)}
+                title="Return to Leave Applications & History"
+              >
+                <ArrowLeft size={13} /> Back to Leave History
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
+                <div className="leave-icon-badge">
+                  <Calendar size={18} />
+                </div>
+                <div>
+                  <h3 className="leave-apply-title">New Leave Request Application</h3>
+                  <p className="leave-apply-sub">
+                    Complete the required fields below. You can <strong>type</strong> your reason or click the <strong>microphone</strong> to speak and convert voice into text.
+                  </p>
+                </div>
               </div>
             </div>
             <div className="leave-form-req-pill">
@@ -1041,234 +1071,237 @@ export default function LeaveManagement() {
         </div>
       )}
 
-      {/* ─── Leave Summary Cards ─── */}
-      <div className="leave-summary-grid">
-        {balances.map(item => {
-          const remaining = item.allocated - item.used;
-          const percentage = Math.round((item.used / item.allocated) * 100);
-          return (
-            <div key={item.id} className="leave-stat-card">
-              <div className="leave-stat-card__top">
-                <span className="leave-stat-card__dot" style={{ background: item.color }} />
-                <span className="leave-stat-card__label">{item.label}</span>
+      {/* ─── Leave Summary Cards & Applications History Queue (Hidden while applying) ─── */}
+      {!showApplyForm && (
+        <>
+          <div className="leave-summary-grid">
+            {balances.map(item => {
+              const remaining = item.allocated - item.used;
+              const percentage = Math.round((item.used / item.allocated) * 100);
+              return (
+                <div key={item.id} className="leave-stat-card">
+                  <div className="leave-stat-card__top">
+                    <span className="leave-stat-card__dot" style={{ background: item.color }} />
+                    <span className="leave-stat-card__label">{item.label}</span>
+                  </div>
+                  <div className="leave-stat-card__main">
+                    <span className="leave-stat-card__bal">{remaining}</span>
+                    <span className="leave-stat-card__sub">/ {item.allocated} days available</span>
+                  </div>
+                  <div className="leave-stat-card__bar-bg">
+                    <div
+                      className="leave-stat-card__bar-fill"
+                      style={{ width: `${percentage}%`, background: item.color }}
+                    />
+                  </div>
+                  <div className="leave-stat-card__foot">
+                    <span>{item.used} Days Used</span>
+                    <span>{percentage}% Utilized</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="leave-table-card">
+            <div className="leave-table-card__header">
+              <div>
+                <h3 className="leave-table-card__title">
+                  {isEmployee ? 'My Leave Applications & History' : 'Leave Requests & Approvals Queue'}
+                </h3>
+                <p className="leave-table-card__sub">
+                  {isEmployee
+                    ? 'Your personal leave submissions, approval status & audit trail'
+                    : 'Real-time workflow approval queue across departments'
+                  }
+                </p>
               </div>
-              <div className="leave-stat-card__main">
-                <span className="leave-stat-card__bal">{remaining}</span>
-                <span className="leave-stat-card__sub">/ {item.allocated} days available</span>
-              </div>
-              <div className="leave-stat-card__bar-bg">
-                <div
-                  className="leave-stat-card__bar-fill"
-                  style={{ width: `${percentage}%`, background: item.color }}
-                />
-              </div>
-              <div className="leave-stat-card__foot">
-                <span>{item.used} Days Used</span>
-                <span>{percentage}% Utilized</span>
+              <div className="leave-table-actions">
+                {isEmployee ? (
+                  <div className="leave-filter-pill">
+                    <Filter size={12} /> My Records ({myRequests.length})
+                  </div>
+                ) : (
+                  <div className="leave-filter-pill">
+                    <Filter size={12} /> Total Records ({submittedRequests.length})
+                  </div>
+                )}
               </div>
             </div>
-          );
-        })}
-      </div>
 
-      {/* ─── Leave Requests Table Queue ─── */}
-      <div className="leave-table-card">
-        <div className="leave-table-card__header">
-          <div>
-            <h3 className="leave-table-card__title">
-              {isEmployee ? 'My Leave Applications & History' : 'Leave Requests & Approvals Queue'}
-            </h3>
-            <p className="leave-table-card__sub">
-              {isEmployee
-                ? 'Your personal leave submissions, approval status & audit trail'
-                : 'Real-time workflow approval queue across departments'
-              }
-            </p>
-          </div>
-          <div className="leave-table-actions">
-            {isEmployee ? (
-              <div className="leave-filter-pill">
-                <Filter size={12} /> My Records ({myRequests.length})
-              </div>
-            ) : (
-              <div className="leave-filter-pill">
-                <Filter size={12} /> Total Records ({submittedRequests.length})
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="leave-table-responsive">
-          <table className="leave-custom-table">
-            <thead>
-              <tr>
-                <th>Request ID & Employee</th>
-                <th>Department</th>
-                <th>Leave Type</th>
-                <th>Duration</th>
-                <th>Days</th>
-                <th>Reason & Handover</th>
-                <th>Attachment</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayedRequests.length === 0 ? (
-                <tr className="leave-empty-row">
-                  <td colSpan={9}>
-                    <div className="leave-empty-state">
-                      <Calendar size={36} />
-                      <h4>No Leave Requests Found</h4>
-                      <p>
-                        {isEmployee
-                          ? 'You have no submitted leave applications in this view. Click "Apply for Leave" above to create an entry.'
-                          : 'Click "Apply for Leave" above to create your first leave request entry.'
-                        }
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                displayedRequests.map((req) => (
-                  <tr key={req.id}>
-                    <td>
-                      <div className="emp-cell">
-                        <div className="emp-cell-avatar">
-                          {req.employeeName.charAt(0)}
-                        </div>
-                        <div>
-                          <div className="emp-cell-name">{req.employeeName}</div>
-                          <div className="emp-cell-id">{req.id} • {req.empId}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="dept-tag">{req.department}</span>
-                    </td>
-                    <td>
-                      <span className="leave-tag">{req.leaveType}</span>
-                    </td>
-                    <td>
-                      <div className="duration-cell">
-                        <div className="date-range">{req.dates}</div>
-                        <div className="mode-sub">{req.duration}</div>
-                      </div>
-                    </td>
-                    <td>
-                      <strong>{req.days}d</strong>
-                    </td>
-                    <td>
-                      <div className="reason-cell">
-                        <div className="reason-text" title={req.reason}>"{req.reason}"</div>
-                        <div className="handover-sub">
-                          Handover: <span>{req.handoverTo}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      {req.attachmentName ? (
-                        <div
-                          className="file-badge"
-                          title={req.attachmentName}
-                          onClick={() => setSelectedRequest(req)}
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <Paperclip size={12} />
-                          <span>{req.attachmentName}</span>
-                        </div>
-                      ) : (
-                        <span className="no-file-text">None</span>
-                      )}
-                    </td>
-                    <td>
-                      <span className={`status-pill ${
-                        req.status === 'Approved' || req.status === 'Approved (Regularised)' ? 'status-approved' :
-                        req.status === 'Dates Blocked (Pending Regularisation)' ? 'status-blocked' :
-                        req.status === 'Pending Approval' ? 'status-pending' : 'status-rejected'
-                      }`}>
-                        {req.status === 'Dates Blocked (Pending Regularisation)' ? '⚠️ Blocked (Action Req.)' : req.status}
-                      </span>
-                    </td>
-                    <td>
-                      {isEmployee ? (
-                        <div className="action-row">
-                          {req.status === 'Dates Blocked (Pending Regularisation)' && !req.regularised && (
-                            <button
-                              type="button"
-                              className="btn-regularise-table"
-                              onClick={() => handleOpenRegularise(req)}
-                              title="Submit reason and documents to regularise this leave"
-                            >
-                              <FileCheck2 size={12} /> Regularise
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            className="btn-view-details"
-                            onClick={() => setSelectedRequest(req)}
-                            title="View full request details"
-                          >
-                            <Eye size={12} /> Details
-                          </button>
-                          {req.status === 'Pending Approval' && (
-                            <button
-                              type="button"
-                              className="btn-withdraw"
-                              onClick={() => handleWithdrawRequest(req.id)}
-                              title="Withdraw this pending request"
-                            >
-                              <Trash2 size={12} /> Withdraw
-                            </button>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="action-row">
-                          {req.status === 'Dates Blocked (Pending Regularisation)' && (
-                            <span className="manager-blocked-tag" title="Dates were reserved via emergency phone call intake">
-                              <PhoneCall size={11} /> Blocked via Call
-                            </span>
-                          )}
-                          {req.status === 'Pending Approval' ? (
-                            <>
-                              <button
-                                type="button"
-                                className="btn-approve"
-                                onClick={() => handleApprove(req.id)}
-                                title="Approve Request"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                type="button"
-                                className="btn-reject"
-                                onClick={() => handleReject(req.id)}
-                                title="Reject Request"
-                              >
-                                Reject
-                              </button>
-                            </>
-                          ) : (
-                            <button
-                              type="button"
-                              className="btn-view-details"
-                              onClick={() => setSelectedRequest(req)}
-                              title="View Request Details"
-                            >
-                              <Eye size={12} /> Details
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </td>
+            <div className="leave-table-responsive">
+              <table className="leave-custom-table">
+                <thead>
+                  <tr>
+                    <th>Request ID & Employee</th>
+                    <th>Department</th>
+                    <th>Leave Type</th>
+                    <th>Duration</th>
+                    <th>Days</th>
+                    <th>Reason & Handover</th>
+                    <th>Attachment</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                </thead>
+                <tbody>
+                  {displayedRequests.length === 0 ? (
+                    <tr className="leave-empty-row">
+                      <td colSpan={9}>
+                        <div className="leave-empty-state">
+                          <Calendar size={36} />
+                          <h4>No Leave Requests Found</h4>
+                          <p>
+                            {isEmployee
+                              ? 'You have no submitted leave applications in this view. Click "Apply for Leave" above to create an entry.'
+                              : 'Click "Apply for Leave" above to create your first leave request entry.'
+                            }
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    displayedRequests.map((req) => (
+                      <tr key={req.id}>
+                        <td>
+                          <div className="emp-cell">
+                            <div className="emp-cell-avatar">
+                              {req.employeeName.charAt(0)}
+                            </div>
+                            <div>
+                              <div className="emp-cell-name">{req.employeeName}</div>
+                              <div className="emp-cell-id">{req.id} • {req.empId}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="dept-tag">{req.department}</span>
+                        </td>
+                        <td>
+                          <span className="leave-tag">{req.leaveType}</span>
+                        </td>
+                        <td>
+                          <div className="duration-cell">
+                            <div className="date-range">{req.dates}</div>
+                            <div className="mode-sub">{req.duration}</div>
+                          </div>
+                        </td>
+                        <td>
+                          <strong>{req.days}d</strong>
+                        </td>
+                        <td>
+                          <div className="reason-cell">
+                            <div className="reason-text" title={req.reason}>"{req.reason}"</div>
+                            <div className="handover-sub">
+                              Handover: <span>{req.handoverTo}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          {req.attachmentName ? (
+                            <div
+                              className="file-badge"
+                              title={req.attachmentName}
+                              onClick={() => setSelectedRequest(req)}
+                              role="button"
+                              tabIndex={0}
+                            >
+                              <Paperclip size={12} />
+                              <span>{req.attachmentName}</span>
+                            </div>
+                          ) : (
+                            <span className="no-file-text">None</span>
+                          )}
+                        </td>
+                        <td>
+                          <span className={`status-pill ${
+                            req.status === 'Approved' || req.status === 'Approved (Regularised)' ? 'status-approved' :
+                            req.status === 'Dates Blocked (Pending Regularisation)' ? 'status-blocked' :
+                            req.status === 'Pending Approval' ? 'status-pending' : 'status-rejected'
+                          }`}>
+                            {req.status === 'Dates Blocked (Pending Regularisation)' ? '⚠️ Blocked (Action Req.)' : req.status}
+                          </span>
+                        </td>
+                        <td>
+                          {isEmployee ? (
+                            <div className="action-row">
+                              {req.status === 'Dates Blocked (Pending Regularisation)' && !req.regularised && (
+                                <button
+                                  type="button"
+                                  className="btn-regularise-table"
+                                  onClick={() => handleOpenRegularise(req)}
+                                  title="Submit reason and documents to regularise this leave"
+                                >
+                                  <FileCheck2 size={12} /> Regularise
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                className="btn-view-details"
+                                onClick={() => setSelectedRequest(req)}
+                                title="View full request details"
+                              >
+                                <Eye size={12} /> Details
+                              </button>
+                              {req.status === 'Pending Approval' && (
+                                <button
+                                  type="button"
+                                  className="btn-withdraw"
+                                  onClick={() => handleWithdrawRequest(req.id)}
+                                  title="Withdraw this pending request"
+                                >
+                                  <Trash2 size={12} /> Withdraw
+                                </button>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="action-row">
+                              {req.status === 'Dates Blocked (Pending Regularisation)' && (
+                                <span className="manager-blocked-tag" title="Dates were reserved via emergency phone call intake">
+                                  <PhoneCall size={11} /> Blocked via Call
+                                </span>
+                              )}
+                              {req.status === 'Pending Approval' ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn-approve"
+                                    onClick={() => handleApprove(req.id)}
+                                    title="Approve Request"
+                                  >
+                                    Approve
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn-reject"
+                                    onClick={() => handleReject(req.id)}
+                                    title="Reject Request"
+                                  >
+                                    Reject
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  type="button"
+                                  className="btn-view-details"
+                                  onClick={() => setSelectedRequest(req)}
+                                  title="View Request Details"
+                                >
+                                  <Eye size={12} /> Details
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* ─── Manager On-Behalf Emergency Block Modal ─── */}
       {showBlockModal && (
