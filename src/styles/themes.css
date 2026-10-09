@@ -337,3 +337,204 @@ body {
   background: #ef4444 !important;
   color: #fff !important;
 }
+
+/* ============================================================
+   COMPREHENSIVE APP-WIDE THEME OVERRIDES
+   Covers every page: Dashboard, Leave, Attendance, Projects
+   ============================================================ */
+
+/* ─────────────────────────────────────────────
+   ALL PRIMARY / ACTION BUTTONS
+   ───────────────────────────────────────────── */
+.leave-btn-primary,
+.dl-btn,
+.att-btn-checkin,
+.btn-regularise-banner,
+.dash-btn-primary,
+.dash-btn-dark,
+.dash-btn-apply-emp,
+.leave-btn-block-manager {
+  background: var(--t-btn-primary-bg) !important;
+  color: var(--t-btn-primary-text) !important;
+  box-shadow: none !important;
+}
+.leave-btn-primary:hover,
+.dl-btn:hover,
+.att-btn-checkin:hover,
+.btn-regularise-banner:hover,
+.dash-btn-dark:hover,
+.dash-btn-apply-emp:hover,
+.leave-btn-block-manager:hover {
+  background: var(--t-btn-primary-hover) !important;
+}
+
+/* ─────────────────────────────────────────────
+   LINK / ACCENT BUTTONS & TEXT
+   ───────────────────────────────────────────── */
+.dash-link-btn,
+.dl-link,
+.att-link,
+a.dash-link-btn {
+  color: var(--t-primary) !important;
+}
+.dash-link-btn:hover,
+.dl-link:hover {
+  color: var(--t-primary-hover) !important;
+}
+
+/* Leave page outline button hover */
+.leave-btn-outline:hover {
+  border-color: var(--t-primary) !important;
+  color: var(--t-primary) !important;
+}
+
+/* ─────────────────────────────────────────────
+   ACTIVE FILTER CHIPS / TABS (Projects, Leave)
+   ───────────────────────────────────────────── */
+.dl-chip--on {
+  background: var(--t-btn-primary-bg) !important;
+  color: var(--t-btn-primary-text) !important;
+  border-color: var(--t-btn-primary-bg) !important;
+}
+
+/* Leave filter tabs */
+.leave-filter-btn--active,
+.leave-tab--active {
+  background: var(--t-primary) !important;
+  color: #fff !important;
+}
+
+/* Attendance filter active */
+.att-filter--active,
+.att-tab--active {
+  background: var(--t-primary) !important;
+  color: #fff !important;
+}
+
+/* ─────────────────────────────────────────────
+   DASHBOARD CARDS & ACCENTS
+   ───────────────────────────────────────────── */
+
+/* Hero card — sidebar bg gradient */
+.dash-hero-card {
+  background: linear-gradient(145deg, var(--t-sidebar-bg, #0a1628) 0%, var(--t-btn-primary-bg, #162b57) 100%) !important;
+}
+
+/* Pulse dot */
+.dash-v2__pulse {
+  background: var(--t-accent, #10b981) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--t-accent, #10b981) 20%, transparent) !important;
+}
+
+/* Apply leave button in dashboard */
+.dash-btn-apply-emp {
+  background: var(--t-btn-primary-bg) !important;
+}
+
+/* Pill nav active */
+.dash-pill-btn--active {
+  background: var(--t-btn-primary-bg) !important;
+  color: #fff !important;
+}
+
+/* ─────────────────────────────────────────────
+   LEAVE PAGE ACCENTS
+   ───────────────────────────────────────────── */
+
+/* Leave icon badge background */
+.leave-icon-badge {
+  background: var(--t-accent-light, #e0f2fe) !important;
+  color: var(--t-primary, #0284c7) !important;
+}
+
+/* Leave apply card breadcrumb button */
+.btn-back-breadcrumb {
+  color: var(--t-primary, #2563eb) !important;
+  border-color: var(--t-primary-light, #eff6ff) !important;
+  background: var(--t-primary-light, #eff6ff) !important;
+}
+.btn-back-breadcrumb:hover {
+  background: var(--t-accent-light, #e0f2fe) !important;
+}
+
+/* Manager block button (amber) — keep amber, override only if needed */
+
+/* ─────────────────────────────────────────────
+   PROJECTS (DELIVERABLES) PAGE
+   ───────────────────────────────────────────── */
+
+/* Active status */
+.dl-s-inprogress {
+  border-color: var(--t-primary, #2563eb) !important;
+  color: var(--t-primary-text, #1d4ed8) !important;
+  background: var(--t-primary-light, #eff6ff) !important;
+}
+
+/* Stat card icon color */
+.dl-stat-icon {
+  /* keeps individual colors per stat */
+}
+
+/* Search focus */
+.dl-search:focus-within {
+  border-color: var(--t-primary, #2563eb) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--t-primary, #2563eb) 15%, transparent) !important;
+}
+
+/* ─────────────────────────────────────────────
+   ATTENDANCE PAGE
+   ───────────────────────────────────────────── */
+
+/* Today cell highlight */
+.att-c-today {
+  border-color: var(--t-primary, #2563eb) !important;
+  background: var(--t-primary-light, #eff6ff) !important;
+}
+
+/* Check-in button */
+.att-btn-checkin {
+  background: var(--t-btn-primary-bg) !important;
+  color: #fff !important;
+}
+
+/* ─────────────────────────────────────────────
+   FORM INPUTS — FOCUS RING FOLLOWS THEME
+   ───────────────────────────────────────────── */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: var(--t-primary, #2563eb) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--t-primary, #2563eb) 15%, transparent) !important;
+}
+
+/* ─────────────────────────────────────────────
+   WHITE THEME — HERO CARD READABLE ON WHITE SIDEBAR
+   ───────────────────────────────────────────── */
+[data-theme="white"] .dash-hero-card {
+  background: linear-gradient(145deg, #162b57 0%, #1e3a6e 100%) !important;
+}
+[data-theme="white"] .dash-pill-btn--active {
+  background: #162b57 !important;
+}
+[data-theme="white"] .dash-btn-apply-emp {
+  background: #16a34a !important;
+}
+[data-theme="white"] .dash-btn-dark {
+  background: #162b57 !important;
+}
+
+/* ─────────────────────────────────────────────
+   FOREST GREEN THEME — APPLY LEAVE GREEN BUTTON STAYS GREEN
+   ───────────────────────────────────────────── */
+[data-theme="forest"] .dash-btn-apply-emp {
+  background: #166534 !important;
+}
+
+/* ─────────────────────────────────────────────
+   PROFILE PAGE AVATAR ACCENT
+   ───────────────────────────────────────────── */
+.emp-profile-avatar,
+.header__avatar {
+  /* keeps role-based color */
+}

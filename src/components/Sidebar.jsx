@@ -8,6 +8,7 @@ import {
 import { useState, useEffect } from 'react';
 import Logo from './Logo';
 import SidebarThemePicker from './SidebarThemePicker';
+import { useTheme } from '../context/ThemeContext';
 import './Sidebar.css';
 
 const EMPLOYEE_NAV = [
@@ -77,6 +78,8 @@ export default function Sidebar({ collapsed }) {
 
   const isEmployee = currentUser?.role === 'employee';
   const navList = isEmployee ? EMPLOYEE_NAV : ADMIN_NAV;
+  const { themeId } = useTheme();
+  const isLightSidebar = themeId === 'white';
 
   const toggleMenu = (key) => {
     setOpenMenus(prev => ({ ...prev, [key]: !prev[key] }));
@@ -89,7 +92,7 @@ export default function Sidebar({ collapsed }) {
     <aside className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''}`}>
       {/* Brand */}
       <div className="sidebar__brand">
-        <Logo size={34} showText={!collapsed} textLight={true} />
+        <Logo size={34} showText={!collapsed} textLight={!isLightSidebar} />
       </div>
 
       {/* Role Tag when expanded */}
