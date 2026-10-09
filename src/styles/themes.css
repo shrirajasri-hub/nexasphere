@@ -1,0 +1,339 @@
+/* ============================================================
+   NexaSphere — 6-Theme CSS Variable System
+   Applied via [data-theme="id"] on <html>
+   ============================================================ */
+
+/* ── 1. OCEAN BLUE (default) ── */
+[data-theme="ocean"],
+:root {
+  --t-sidebar-bg:          #0a1628;
+  --t-sidebar-brand-border: rgba(255,255,255,.08);
+  --t-sidebar-text:        rgba(180,200,240,.80);
+  --t-sidebar-text-active: #ffffff;
+  --t-sidebar-hover-bg:    rgba(255,255,255,.07);
+  --t-sidebar-active-bg:   rgba(59,107,199,.28);
+  --t-sidebar-active-bar:  #0ea5e9;
+  --t-sidebar-sub-border:  rgba(255,255,255,.10);
+  --t-sidebar-footer-bg:   rgba(255,255,255,.06);
+  --t-sidebar-footer-text: rgba(180,200,240,.60);
+  --t-sidebar-scrollbar:   rgba(255,255,255,.10);
+
+  --t-primary:             #2563eb;
+  --t-primary-hover:       #1d4ed8;
+  --t-primary-light:       #eff6ff;
+  --t-primary-text:        #1d4ed8;
+  --t-accent:              #0ea5e9;
+  --t-accent-light:        #e0f2fe;
+  --t-accent-text:         #0369a1;
+
+  --t-header-bg:           #ffffff;
+  --t-header-border:       #e2e8f0;
+  --t-header-text:         #0f172a;
+
+  --t-content-bg:          #f8fafc;
+  --t-card-bg:             #ffffff;
+  --t-card-border:         #e2e8f0;
+  --t-body-text:           #1e293b;
+  --t-muted-text:          #64748b;
+
+  --t-btn-primary-bg:      #162b57;
+  --t-btn-primary-hover:   #0a1628;
+  --t-btn-primary-text:    #ffffff;
+}
+
+/* ── 2. FOREST GREEN ── */
+[data-theme="forest"] {
+  --t-sidebar-bg:          #0c2d1e;
+  --t-sidebar-brand-border: rgba(255,255,255,.08);
+  --t-sidebar-text:        rgba(180,230,200,.75);
+  --t-sidebar-text-active: #ffffff;
+  --t-sidebar-hover-bg:    rgba(255,255,255,.07);
+  --t-sidebar-active-bg:   rgba(22,163,74,.28);
+  --t-sidebar-active-bar:  #4ade80;
+  --t-sidebar-sub-border:  rgba(255,255,255,.10);
+  --t-sidebar-footer-bg:   rgba(255,255,255,.06);
+  --t-sidebar-footer-text: rgba(180,230,200,.55);
+  --t-sidebar-scrollbar:   rgba(255,255,255,.10);
+
+  --t-primary:             #16a34a;
+  --t-primary-hover:       #15803d;
+  --t-primary-light:       #f0fdf4;
+  --t-primary-text:        #15803d;
+  --t-accent:              #22c55e;
+  --t-accent-light:        #dcfce7;
+  --t-accent-text:         #166534;
+
+  --t-header-bg:           #ffffff;
+  --t-header-border:       #e2e8f0;
+  --t-header-text:         #0f172a;
+
+  --t-content-bg:          #f8fafc;
+  --t-card-bg:             #ffffff;
+  --t-card-border:         #e2e8f0;
+  --t-body-text:           #1e293b;
+  --t-muted-text:          #64748b;
+
+  --t-btn-primary-bg:      #15803d;
+  --t-btn-primary-hover:   #0c2d1e;
+  --t-btn-primary-text:    #ffffff;
+}
+
+/* ── 3. ROYAL PURPLE ── */
+[data-theme="purple"] {
+  --t-sidebar-bg:          #1e1045;
+  --t-sidebar-brand-border: rgba(255,255,255,.08);
+  --t-sidebar-text:        rgba(210,190,255,.75);
+  --t-sidebar-text-active: #ffffff;
+  --t-sidebar-hover-bg:    rgba(255,255,255,.07);
+  --t-sidebar-active-bg:   rgba(124,58,237,.30);
+  --t-sidebar-active-bar:  #a78bfa;
+  --t-sidebar-sub-border:  rgba(255,255,255,.10);
+  --t-sidebar-footer-bg:   rgba(255,255,255,.06);
+  --t-sidebar-footer-text: rgba(210,190,255,.55);
+  --t-sidebar-scrollbar:   rgba(255,255,255,.10);
+
+  --t-primary:             #7c3aed;
+  --t-primary-hover:       #6d28d9;
+  --t-primary-light:       #f5f3ff;
+  --t-primary-text:        #6d28d9;
+  --t-accent:              #a78bfa;
+  --t-accent-light:        #ede9fe;
+  --t-accent-text:         #5b21b6;
+
+  --t-header-bg:           #ffffff;
+  --t-header-border:       #e2e8f0;
+  --t-header-text:         #0f172a;
+
+  --t-content-bg:          #f8fafc;
+  --t-card-bg:             #ffffff;
+  --t-card-border:         #e2e8f0;
+  --t-body-text:           #1e293b;
+  --t-muted-text:          #64748b;
+
+  --t-btn-primary-bg:      #6d28d9;
+  --t-btn-primary-hover:   #1e1045;
+  --t-btn-primary-text:    #ffffff;
+}
+
+/* ── 4. CRIMSON RED ── */
+[data-theme="crimson"] {
+  --t-sidebar-bg:          #1a0a0a;
+  --t-sidebar-brand-border: rgba(255,255,255,.08);
+  --t-sidebar-text:        rgba(255,200,190,.75);
+  --t-sidebar-text-active: #ffffff;
+  --t-sidebar-hover-bg:    rgba(255,255,255,.07);
+  --t-sidebar-active-bg:   rgba(220,38,38,.28);
+  --t-sidebar-active-bar:  #f87171;
+  --t-sidebar-sub-border:  rgba(255,255,255,.10);
+  --t-sidebar-footer-bg:   rgba(255,255,255,.06);
+  --t-sidebar-footer-text: rgba(255,200,190,.55);
+  --t-sidebar-scrollbar:   rgba(255,255,255,.10);
+
+  --t-primary:             #dc2626;
+  --t-primary-hover:       #b91c1c;
+  --t-primary-light:       #fef2f2;
+  --t-primary-text:        #b91c1c;
+  --t-accent:              #f97316;
+  --t-accent-light:        #fff7ed;
+  --t-accent-text:         #c2410c;
+
+  --t-header-bg:           #ffffff;
+  --t-header-border:       #e2e8f0;
+  --t-header-text:         #0f172a;
+
+  --t-content-bg:          #f8fafc;
+  --t-card-bg:             #ffffff;
+  --t-card-border:         #e2e8f0;
+  --t-body-text:           #1e293b;
+  --t-muted-text:          #64748b;
+
+  --t-btn-primary-bg:      #b91c1c;
+  --t-btn-primary-hover:   #1a0a0a;
+  --t-btn-primary-text:    #ffffff;
+}
+
+/* ── 5. MIDNIGHT SLATE ── */
+[data-theme="slate"] {
+  --t-sidebar-bg:          #0f172a;
+  --t-sidebar-brand-border: rgba(255,255,255,.07);
+  --t-sidebar-text:        rgba(148,163,184,.80);
+  --t-sidebar-text-active: #ffffff;
+  --t-sidebar-hover-bg:    rgba(255,255,255,.05);
+  --t-sidebar-active-bg:   rgba(14,165,233,.22);
+  --t-sidebar-active-bar:  #38bdf8;
+  --t-sidebar-sub-border:  rgba(255,255,255,.08);
+  --t-sidebar-footer-bg:   rgba(255,255,255,.05);
+  --t-sidebar-footer-text: rgba(148,163,184,.55);
+  --t-sidebar-scrollbar:   rgba(255,255,255,.08);
+
+  --t-primary:             #0ea5e9;
+  --t-primary-hover:       #0284c7;
+  --t-primary-light:       #f0f9ff;
+  --t-primary-text:        #0369a1;
+  --t-accent:              #38bdf8;
+  --t-accent-light:        #e0f2fe;
+  --t-accent-text:         #0c4a6e;
+
+  --t-header-bg:           #ffffff;
+  --t-header-border:       #e2e8f0;
+  --t-header-text:         #0f172a;
+
+  --t-content-bg:          #f8fafc;
+  --t-card-bg:             #ffffff;
+  --t-card-border:         #e2e8f0;
+  --t-body-text:           #1e293b;
+  --t-muted-text:          #64748b;
+
+  --t-btn-primary-bg:      #0369a1;
+  --t-btn-primary-hover:   #0f172a;
+  --t-btn-primary-text:    #ffffff;
+}
+
+/* ── 6. PURE WHITE (light) ── */
+[data-theme="white"] {
+  --t-sidebar-bg:          #ffffff;
+  --t-sidebar-brand-border: #e2e8f0;
+  --t-sidebar-text:        #475569;
+  --t-sidebar-text-active: #162b57;
+  --t-sidebar-hover-bg:    #f1f5f9;
+  --t-sidebar-active-bg:   #dbeafe;
+  --t-sidebar-active-bar:  #2563eb;
+  --t-sidebar-sub-border:  #e2e8f0;
+  --t-sidebar-footer-bg:   #f8fafc;
+  --t-sidebar-footer-text: #94a3b8;
+  --t-sidebar-scrollbar:   #cbd5e1;
+
+  --t-primary:             #2563eb;
+  --t-primary-hover:       #1d4ed8;
+  --t-primary-light:       #eff6ff;
+  --t-primary-text:        #1d4ed8;
+  --t-accent:              #0ea5e9;
+  --t-accent-light:        #e0f2fe;
+  --t-accent-text:         #0369a1;
+
+  --t-header-bg:           #f8fafc;
+  --t-header-border:       #e2e8f0;
+  --t-header-text:         #0f172a;
+
+  --t-content-bg:          #f1f5f9;
+  --t-card-bg:             #ffffff;
+  --t-card-border:         #e2e8f0;
+  --t-body-text:           #1e293b;
+  --t-muted-text:          #64748b;
+
+  --t-btn-primary-bg:      #162b57;
+  --t-btn-primary-hover:   #0a1628;
+  --t-btn-primary-text:    #ffffff;
+}
+
+/* ============================================================
+   GLOBAL THEME-AWARE OVERRIDES
+   These override the hardcoded values in component CSS files
+   ============================================================ */
+
+/* Body background */
+body {
+  background: var(--t-content-bg, #f8fafc);
+  color: var(--t-body-text, #1e293b);
+}
+
+/* ── Sidebar overrides ── */
+.sidebar {
+  background: var(--t-sidebar-bg, #0a1628) !important;
+}
+.sidebar__brand {
+  border-bottom-color: var(--t-sidebar-brand-border, rgba(255,255,255,.08)) !important;
+}
+.sidebar__brand-name {
+  color: var(--t-sidebar-text-active, #ffffff) !important;
+}
+.sidebar__brand-sub {
+  color: var(--t-sidebar-text, rgba(180,200,240,.80)) !important;
+}
+.sidebar__item {
+  color: var(--t-sidebar-text, rgba(180,200,240,.80)) !important;
+}
+.sidebar__item:hover {
+  background: var(--t-sidebar-hover-bg, rgba(255,255,255,.07)) !important;
+  color: var(--t-sidebar-text-active, #ffffff) !important;
+}
+.sidebar__item--active {
+  background: var(--t-sidebar-active-bg, rgba(59,107,199,.28)) !important;
+  color: var(--t-sidebar-text-active, #ffffff) !important;
+}
+.sidebar__item--active::before {
+  background: var(--t-sidebar-active-bar, #0ea5e9) !important;
+}
+.sidebar__subitem {
+  color: var(--t-sidebar-text, rgba(180,200,240,.80)) !important;
+}
+.sidebar__subitem:hover {
+  background: var(--t-sidebar-hover-bg, rgba(255,255,255,.07)) !important;
+  color: var(--t-sidebar-text-active, #ffffff) !important;
+}
+.sidebar__subitem--active {
+  background: var(--t-sidebar-active-bg, rgba(59,107,199,.28)) !important;
+  color: var(--t-sidebar-text-active, #ffffff) !important;
+}
+.sidebar__submenu {
+  border-left-color: var(--t-sidebar-sub-border, rgba(255,255,255,.10)) !important;
+}
+.sidebar__footer {
+  border-top-color: var(--t-sidebar-brand-border, rgba(255,255,255,.08)) !important;
+}
+.sidebar__footer-tag {
+  background: var(--t-sidebar-footer-bg, rgba(255,255,255,.06)) !important;
+  color: var(--t-sidebar-footer-text, rgba(180,200,240,.60)) !important;
+  border-color: var(--t-sidebar-brand-border, rgba(255,255,255,.08)) !important;
+}
+.sidebar__nav::-webkit-scrollbar-thumb {
+  background: var(--t-sidebar-scrollbar, rgba(255,255,255,.10)) !important;
+}
+
+/* White theme – sidebar text in role tag */
+[data-theme="white"] .sidebar__item--parent {
+  color: var(--t-sidebar-text, #475569) !important;
+}
+
+/* ── Header overrides ── */
+.header {
+  background: var(--t-header-bg, #ffffff) !important;
+  border-bottom-color: var(--t-header-border, #e2e8f0) !important;
+}
+
+/* ── Primary button overrides ── */
+.leave-btn-primary,
+.dl-btn,
+.att-btn-checkin,
+.btn-regularise-banner,
+.dash-btn-primary {
+  background: var(--t-btn-primary-bg, #162b57) !important;
+  color: var(--t-btn-primary-text, #ffffff) !important;
+}
+.leave-btn-primary:hover,
+.dl-btn:hover,
+.att-btn-checkin:hover,
+.btn-regularise-banner:hover,
+.dash-btn-primary:hover {
+  background: var(--t-btn-primary-hover, #0a1628) !important;
+}
+
+/* ── Active indicator bar color (applies to all colored themes) ── */
+[data-theme="forest"] .sidebar__item--active::before  { background: #4ade80 !important; }
+[data-theme="purple"] .sidebar__item--active::before  { background: #a78bfa !important; }
+[data-theme="crimson"] .sidebar__item--active::before { background: #f87171 !important; }
+[data-theme="slate"] .sidebar__item--active::before   { background: #38bdf8 !important; }
+[data-theme="white"] .sidebar__item--active::before   { background: #2563eb !important; }
+
+/* ── White theme sidebar has a right shadow to separate it ── */
+[data-theme="white"] .sidebar {
+  box-shadow: 2px 0 12px rgba(0,0,0,.08) !important;
+  border-right: 1px solid #e2e8f0 !important;
+}
+[data-theme="white"] .sidebar__brand-sub {
+  color: #94a3b8 !important;
+}
+[data-theme="white"] .sidebar__badge {
+  background: #ef4444 !important;
+  color: #fff !important;
+}

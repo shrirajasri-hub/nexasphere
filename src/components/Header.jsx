@@ -4,6 +4,7 @@ import {
   Menu, Bell, Search, ChevronDown, Calendar,
   User, LogOut, Settings, HelpCircle, UserCheck, Shield
 } from 'lucide-react';
+import ThemePicker from './ThemePicker';
 import './Header.css';
 
 const PAGE_TITLES = {
@@ -156,6 +157,9 @@ export default function Header({ onToggleSidebar, collapsed }) {
           <Calendar size={14} />
           <span>{today}</span>
         </button>
+
+        {/* Theme Picker */}
+        <ThemePicker />
 
         {/* Notifications */}
         <div className="header__notif-wrap">
