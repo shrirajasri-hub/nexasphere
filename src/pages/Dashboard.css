@@ -238,6 +238,12 @@
   display: grid;
   grid-template-columns: 320px 1.8fr 1.2fr;
   gap: 18px;
+  align-items: start;
+}
+
+/* Flow card: don't stretch content — let it size naturally */
+.dash-card--flow {
+  justify-content: flex-start;
 }
 
 /* Card 1: Hero Card (Navy Textured Card) */
