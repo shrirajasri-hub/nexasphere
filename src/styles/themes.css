@@ -348,6 +348,8 @@ body {
    ───────────────────────────────────────────── */
 .leave-btn-primary,
 .dl-btn,
+.prj-btn-primary,
+.tsk-btn-primary,
 .att-btn-checkin,
 .btn-regularise-banner,
 .dash-btn-primary,
@@ -360,6 +362,8 @@ body {
 }
 .leave-btn-primary:hover,
 .dl-btn:hover,
+.prj-btn-primary:hover,
+.tsk-btn-primary:hover,
 .att-btn-checkin:hover,
 .btn-regularise-banner:hover,
 .dash-btn-dark:hover,
@@ -373,33 +377,42 @@ body {
    ───────────────────────────────────────────── */
 .dash-link-btn,
 .dl-link,
+.prj-link-tasks,
+.prj-ms-view-tasks,
 .att-link,
 a.dash-link-btn {
   color: var(--t-primary) !important;
 }
 .dash-link-btn:hover,
-.dl-link:hover {
+.dl-link:hover,
+.prj-link-tasks:hover,
+.prj-ms-view-tasks:hover {
   color: var(--t-primary-hover) !important;
 }
 
 /* Leave page outline button hover */
-.leave-btn-outline:hover {
+.leave-btn-outline:hover,
+.prj-btn-outline:hover {
   border-color: var(--t-primary) !important;
   color: var(--t-primary) !important;
 }
 
 /* ─────────────────────────────────────────────
-   ACTIVE FILTER CHIPS / TABS (Projects, Leave)
+   ACTIVE FILTER CHIPS / TABS (Projects, Tasks, Leave)
    ───────────────────────────────────────────── */
-.dl-chip--on {
+.dl-chip--on,
+.prj-chip--active,
+.tsk-choice-active,
+.prj-m-tab--active {
   background: var(--t-btn-primary-bg) !important;
   color: var(--t-btn-primary-text) !important;
   border-color: var(--t-btn-primary-bg) !important;
 }
 
-/* Leave filter tabs */
+/* Leave & Project filter tabs */
 .leave-filter-btn--active,
-.leave-tab--active {
+.leave-tab--active,
+.prj-tab-btn--active {
   background: var(--t-primary) !important;
   color: #fff !important;
 }

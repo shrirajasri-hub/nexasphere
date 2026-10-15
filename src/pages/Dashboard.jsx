@@ -9,6 +9,7 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 import { Link } from 'react-router-dom';
+import { getStoredProjects } from '../utils/projectTaskStore';
 import './Dashboard.css';
 
 /* ─── Chart Data ─── */
@@ -49,12 +50,19 @@ const DEPT_BLOCKS = [
   { name: 'Operations',  pct: '16%', count: 202, color: '#f59e0b', bg: '#fffbeb' },
 ];
 
-const PROJECT_HEALTH = [
-  { name: 'Automation Line A', progress: 85, status: 'On Track', color: '#10b981', lead: 'Priya S.', avatar: 'P' },
-  { name: 'Vision Inspection System', progress: 62, status: 'At Risk', color: '#f59e0b', lead: 'Arun K.', avatar: 'A' },
-  { name: 'Tool Life & Calibration Tracking', progress: 38, status: 'Overdue', color: '#ef4444', lead: 'Vignesh M.', avatar: 'V' },
-  { name: 'Production MIS Dashboard', progress: 74, status: 'On Track', color: '#10b981', lead: 'Meena R.', avatar: 'M' },
-];
+// Derive live project health from shared store
+const HEALTH_COLOR = { 'On Track': '#10b981', 'At Risk': '#f59e0b', 'Delayed': '#ef4444' };
+function getLiveProjectHealth() {
+  const projects = getStoredProjects();
+  return projects.slice(0, 4).map(p => ({
+    name: p.name,
+    progress: p.progress,
+    status: p.health,
+    color: HEALTH_COLOR[p.health] || '#10b981',
+    lead: p.lead.split(' ').slice(0, 2).map((w, i) => i === 1 ? w[0] + '.' : w).join(' '),
+    avatar: p.leadAvatar || p.lead[0],
+  }));
+}
 
 const TEAM_LEAVES = [
   { name: 'Priya Sundaram', dept: 'Design & UX', type: 'Casual Leave', date: '26 Sep – 28 Sep', typeColor: '#2563eb', avatar: 'PS' },
@@ -418,7 +426,7 @@ export default function Dashboard() {
           </div>
 
           <div className="ph-list">
-            {PROJECT_HEALTH.map(p => (
+            {getLiveProjectHealth().map(p => (
               <div key={p.name} className="ph-item">
                 <div className="ph-item__left">
                   <div className="ph-item__avatar">{p.avatar}</div>

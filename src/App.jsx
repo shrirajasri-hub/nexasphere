@@ -6,7 +6,8 @@ import LeaveManagement from './pages/LeaveManagement';
 import EmployeeMaster from './pages/masters/EmployeeMaster';
 import EmployeeProfile from './pages/EmployeeProfile';
 import Attendance from './pages/Attendance';
-import Deliverables from './pages/Deliverables';
+import Projects from './pages/Projects';
+import Tasks from './pages/Tasks';
 import Layout from './components/Layout';
 import './index.css';
 
@@ -22,7 +23,8 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/leave" element={<LeaveManagement />} />
-          <Route path="/projects" element={<Deliverables />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/tasks" element={<Tasks />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/profile" element={<EmployeeProfile />} />
           <Route path="/masters/employees" element={<EmployeeMaster />} />
