@@ -9,6 +9,7 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import { getStoredProjects } from '../utils/projectTaskStore';
 import './Dashboard.css';
 
@@ -79,6 +80,8 @@ const RECENT_TRANSACTIONS = [
 ];
 
 export default function Dashboard() {
+  const { currentTheme } = useTheme();
+  const themeColor = currentTheme?.accent || '#2563eb';
   const [activeTab, setActiveTab] = useState('Overview');
   const [currentUser, setCurrentUser] = useState(() => {
     try {
@@ -252,7 +255,7 @@ export default function Dashboard() {
             </div>
             <div className="dash-card__actions">
               <div className="dash-legend-inline">
-                <span className="dash-legend-dot" style={{ background: '#2563eb' }} /> Present
+                <span className="dash-legend-dot" style={{ background: themeColor }} /> Present
                 <span className="dash-legend-dot" style={{ background: '#0ea5e9' }} /> Target
               </div>
               <select className="dash-dropdown-sm">
@@ -267,8 +270,8 @@ export default function Dashboard() {
               <AreaChart data={isEmployee ? EMP_ATTENDANCE_DATA : ATTENDANCE_LINE_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorPresent" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                    <stop offset="5%" stopColor={themeColor} stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor={themeColor} stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorTarget" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.2}/>
@@ -281,7 +284,7 @@ export default function Dashboard() {
                 <Tooltip
                   contentStyle={{ background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px rgba(0,0,0,0.08)' }}
                 />
-                <Area type="monotone" dataKey="present" stroke="#2563eb" strokeWidth={2.5} fillOpacity={1} fill="url(#colorPresent)" />
+                <Area type="monotone" dataKey="present" stroke={themeColor} strokeWidth={2.5} fillOpacity={1} fill="url(#colorPresent)" />
                 <Area type="monotone" dataKey="target" stroke="#0ea5e9" strokeWidth={2} strokeDasharray="4 4" fillOpacity={1} fill="url(#colorTarget)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -300,22 +303,26 @@ export default function Dashboard() {
 
           <div className="gauge-wrap">
             <div className="gauge-chart-box">
-              <ResponsiveContainer width={160} height={130}>
-                <PieChart>
+              {/* height=90 clips the bottom half of the semicircle — no dead space below arc */}
+              <ResponsiveContainer width={180} height={90}>
+                <PieChart width={180} height={180}>
                   <Pie
-                    data={isEmployee ? EMP_GAUGE_DATA : GAUGE_DATA}
-                    cx={75}
-                    cy={75}
+                    data={(isEmployee ? EMP_GAUGE_DATA : GAUGE_DATA).map(item => ({
+                      ...item,
+                      color: item.name === 'Present' ? themeColor : '#e2e8f0',
+                    }))}
+                    cx={85}
+                    cy={82}
                     startAngle={180}
                     endAngle={0}
-                    innerRadius={52}
-                    outerRadius={70}
+                    innerRadius={56}
+                    outerRadius={76}
                     paddingAngle={3}
                     dataKey="value"
                     cornerRadius={6}
                   >
                     {(isEmployee ? EMP_GAUGE_DATA : GAUGE_DATA).map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell key={`cell-${index}`} fill={entry.name === 'Present' ? themeColor : '#e2e8f0'} />
                     ))}
                   </Pie>
                 </PieChart>

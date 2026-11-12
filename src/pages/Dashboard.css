@@ -1,5 +1,5 @@
 /* ============================================
-   NexaSphere — Premium Dashboard V2 (Ref Design)
+   NexaSphere â€” Premium Dashboard V2 (Ref Design)
    ============================================ */
 
 .dash-v2 {
@@ -8,7 +8,7 @@
   gap: 24px;
 }
 
-/* ─── Top Header Bar ─── */
+/* â”€â”€â”€ Top Header Bar â”€â”€â”€ */
 .dash-v2__header {
   display: flex;
   align-items: center;
@@ -28,10 +28,10 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #f1f5f9;
+  background: var(--t-card-bg, #f1f5f9);
   padding: 4px;
   border-radius: 30px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--t-card-border, #e2e8f0);
   width: fit-content;
 }
 
@@ -42,7 +42,7 @@
   background: transparent;
   font-size: 12.5px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--t-muted-text, #64748b);
   cursor: pointer;
   transition: all .2s ease;
   white-space: nowrap;
@@ -51,8 +51,8 @@
   color: #0f172a;
 }
 .dash-pill-btn--active {
-  background: #0f172a !important;
-  color: #ffffff !important;
+  background: var(--t-btn-primary-bg, #0f172a) !important;
+  color: var(--t-btn-primary-text, #ffffff) !important;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
 }
 
@@ -65,7 +65,7 @@
 .dash-v2__welcome {
   font-size: 24px;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--t-body-text, #0f172a);
   letter-spacing: -0.6px;
 }
 
@@ -74,11 +74,11 @@
   align-items: center;
   gap: 6px;
   font-size: 11.5px;
-  color: #64748b;
-  background: #ffffff;
+  color: var(--t-muted-text, #64748b);
+  background: var(--t-card-bg, #ffffff);
   padding: 3px 10px;
   border-radius: 20px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--t-card-border, #e2e8f0);
   font-weight: 500;
 }
 
@@ -123,36 +123,38 @@
   align-items: center;
   gap: 6px;
   padding: 9px 20px;
-  background: #0f172a;
+  background: var(--t-btn-primary-bg, #0f172a);
   border: none;
   border-radius: 30px;
   font-size: 13px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--t-btn-primary-text, #ffffff);
   cursor: pointer;
   transition: all .2s;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
 }
 .dash-btn-dark:hover {
-  background: #1e293b;
+  background: var(--t-btn-primary-hover, #1e293b);
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.3);
 }
 
-/* ─── Cards Base ─── */
+/* â”€â”€â”€ Cards Base â”€â”€â”€ */
 .dash-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--t-card-bg, #ffffff);
+  border: 1px solid var(--t-card-border, #e2e8f0);
+  border-top: 3px solid var(--t-primary, #2563eb);
   border-radius: 20px;
   padding: 22px;
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: box-shadow .2s ease, transform .2s ease;
+  transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
 }
 .dash-card:hover {
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  border-top-color: var(--t-accent, #0ea5e9);
 }
 
 .dash-card__header {
@@ -166,12 +168,12 @@
 .dash-card__title {
   font-size: 15px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--t-body-text, #0f172a);
   letter-spacing: -0.2px;
 }
 .dash-card__sub {
   font-size: 12px;
-  color: #64748b;
+  color: var(--t-muted-text, #64748b);
   margin-top: 2px;
 }
 
@@ -199,12 +201,12 @@
 
 .dash-dropdown-sm {
   padding: 4px 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--t-card-border, #e2e8f0);
   border-radius: 8px;
   font-size: 11.5px;
   font-weight: 500;
-  color: #475569;
-  background: #ffffff;
+  color: var(--t-body-text, #475569);
+  background: var(--t-card-bg, #ffffff);
   outline: none;
   cursor: pointer;
 }
@@ -223,17 +225,17 @@
 .dash-link-btn {
   font-size: 12px;
   font-weight: 600;
-  color: #2563eb;
+  color: var(--t-primary, #2563eb);
   background: none;
   border: none;
   cursor: pointer;
   transition: color .15s;
 }
 .dash-link-btn:hover {
-  color: #1d4ed8;
+  color: var(--t-primary-hover, #1d4ed8);
 }
 
-/* ─── Grid Top Row ─── */
+/* â”€â”€â”€ Grid Top Row â”€â”€â”€ */
 .dash-grid-top {
   display: grid;
   grid-template-columns: minmax(260px, 290px) minmax(320px, 1.8fr) minmax(220px, 1.1fr);
@@ -241,7 +243,7 @@
   align-items: stretch;
 }
 
-/* Flow card: chart fills all remaining height — no empty gap */
+/* Flow card: chart fills all remaining height â€” no empty gap */
 .dash-card--flow {
   justify-content: flex-start;
 }
@@ -366,26 +368,32 @@
   justify-content: space-between;
 }
 .gauge-wrap {
-  flex: 1;
+  /* no flex:1 â€” let content size itself, centered */
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   position: relative;
-  min-height: 130px;
+  padding: 12px 0 4px;
 }
 .gauge-chart-box {
   position: relative;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
+  /* clip bottom overflow from the semicircle svg */
+  overflow: hidden;
 }
 .gauge-center-val {
   position: absolute;
-  top: 50px;
+  /* sits at the bottom of the visible arc */
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  pointer-events: none;
 }
 .gauge-big-num {
   font-size: 24px;
@@ -402,10 +410,10 @@
   text-align: center;
   border-top: 1px solid #f1f5f9;
   padding-top: 10px;
-  margin-top: auto;
+  margin-top: 12px;
 }
 
-/* ─── Grid Middle Row ─── */
+/* â”€â”€â”€ Grid Middle Row â”€â”€â”€ */
 .dash-grid-mid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -466,8 +474,8 @@
   gap: 14px;
   padding: 10px 14px;
   border-radius: 12px;
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: var(--t-content-bg, #f8fafc);
+  border: 1px solid var(--t-card-border, #f1f5f9);
 }
 .ph-item__left {
   display: flex;
@@ -487,7 +495,7 @@
 .ph-item__name {
   font-size: 13px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--t-body-text, #0f172a);
   display: block;
 }
 .ph-item__lead {
@@ -527,7 +535,7 @@
   white-space: nowrap;
 }
 
-/* ─── Grid Bottom Row ─── */
+/* â”€â”€â”€ Grid Bottom Row â”€â”€â”€ */
 .dash-grid-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -592,7 +600,7 @@
 .activity-time { font-size: 10.5px; color: #94a3b8; font-weight: 500; }
 
 /* Responsive adjustments */
-@media (max-width: 1080px) {
+@media (max-width: 1200px) {
   .dash-grid-top {
     grid-template-columns: 1fr 1fr;
   }
@@ -622,7 +630,7 @@
   }
 }
 
-/* ─── Employee Portal Specific Dashboard Styles ─── */
+/* â”€â”€â”€ Employee Portal Specific Dashboard Styles â”€â”€â”€ */
 .dash-btn-apply-emp {
   display: inline-flex;
   align-items: center;
@@ -675,4 +683,5 @@
   margin-top: 3px;
   font-weight: 600;
 }
+
 
