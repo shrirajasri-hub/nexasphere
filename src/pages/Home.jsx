@@ -5,6 +5,7 @@ import {
 import Logo from '../components/Logo';
 import SmartLeaveInfographic from '../components/SmartLeaveInfographic';
 import WorkforceHubDiagram from '../components/WorkforceHubDiagram';
+import heroBg from '../assets/hero-bg.jpg';
 import './Home.css';
 
 const HIGHLIGHTS = [
@@ -67,7 +68,12 @@ export default function Home() {
         <div className="corp-hero__right">
           
           {/* High-Resolution Corporate Executive Team Background */}
-          <div className="corp-hero__bg-img" />
+          <div
+            className="corp-hero__bg-img"
+            style={{
+              backgroundImage: `linear-gradient(105deg, rgba(10, 18, 40, 0.82) 0%, rgba(10, 18, 40, 0.55) 55%, rgba(0, 180, 216, 0.15) 100%), url(${heroBg})`
+            }}
+          />
 
           {/* Overlapping Cyan Translucent Geometric Ribbons */}
           <div className="corp-hero__ribbon corp-hero__ribbon--1" />
