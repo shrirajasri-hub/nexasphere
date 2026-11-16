@@ -9,16 +9,29 @@ import { useState, useEffect } from 'react';
 import Logo from './Logo';
 import SidebarThemePicker from './SidebarThemePicker';
 import { useTheme } from '../context/ThemeContext';
+import { triggerPlannedFeatureModal } from './YetToBeDevelopedModal';
 import './Sidebar.css';
 
+// ─── Active scope paths (Phase 2 approved only) ───
+const ACTIVE_PATHS = ['/dashboard', '/leave', '/profile', '/masters/employees'];
+
+const isInScope = (to) => ACTIVE_PATHS.some(p => to === p || to.startsWith(p));
+
 const EMPLOYEE_NAV = [
-  { icon: LayoutDashboard, label: 'My Dashboard',        to: '/dashboard' },
-  { icon: CalendarDays,    label: 'Apply Leave',         to: '/leave', badge: 'Apply' },
-  { icon: Clock,           label: 'My Attendance',       to: '/attendance' },
-  { icon: FolderKanban,    label: 'My Projects',         to: '/projects' },
-  { icon: CheckSquare,     label: 'My Tasks',            to: '/tasks' },
-  { icon: User,            label: 'My Profile',          to: '/profile' },
-  { icon: Bell,            label: 'Notifications',       to: '/notifications', badge: 3 },
+  { icon: LayoutDashboard, label: 'My Dashboard',    to: '/dashboard' },
+  { icon: CalendarDays,    label: 'Apply Leave',     to: '/leave', badge: 'Apply' },
+  { icon: Clock,           label: 'My Attendance',   to: '/attendance' },
+  { icon: FolderKanban,    label: 'My Projects',     to: '/projects' },
+  { icon: CheckSquare,     label: 'My Tasks',        to: '/tasks' },
+  { icon: User,            label: 'My Profile',      to: '/profile' },
+  { icon: Bell,            label: 'Notifications',   to: '/notifications', badge: 3 },
+];
+
+const SUPERVISOR_NAV = [
+  { icon: LayoutDashboard, label: 'Dashboard',           to: '/dashboard' },
+  { icon: CalendarDays,    label: 'Team Leave Approvals', to: '/leave' },
+  { icon: User,            label: 'My Profile',           to: '/profile' },
+  { icon: Bell,            label: 'Notifications',        to: '/notifications', badge: 2 },
 ];
 
 const ADMIN_NAV = [
@@ -34,17 +47,17 @@ const ADMIN_NAV = [
   {
     icon: BookOpen, label: 'Masters', to: '/masters',
     children: [
-      { icon: Users,      label: 'Employee Master',     to: '/masters/employees' },
-      { icon: Building2,  label: 'Department Master',   to: '/masters/departments' },
-      { icon: Briefcase,  label: 'Designation Master',  to: '/masters/designations' },
-      { icon: Globe,      label: 'Branch / Location',   to: '/masters/branches' },
-      { icon: BarChart3,   label: 'MIS Reports Config',  to: '/masters/reports-config' },
-      { icon: CalendarDays, label: 'Leave Policy',      to: '/masters/leave-policy' },
-      { icon: FileText,   label: 'Document Types',      to: '/masters/documents' },
-      { icon: Shield,     label: 'Roles & Permissions', to: '/masters/roles' },
+      { icon: Users,        label: 'Employee Master',    to: '/masters/employees' },
+      { icon: Building2,    label: 'Department Master',  to: '/masters/departments' },
+      { icon: Briefcase,    label: 'Designation Master', to: '/masters/designations' },
+      { icon: Globe,        label: 'Branch / Location',  to: '/masters/branches' },
+      { icon: BarChart3,    label: 'MIS Reports Config', to: '/masters/reports-config' },
+      { icon: CalendarDays, label: 'Leave Policy',       to: '/masters/leave-policy' },
+      { icon: FileText,     label: 'Document Types',     to: '/masters/documents' },
+      { icon: Shield,       label: 'Roles & Permissions',to: '/masters/roles' },
     ]
   },
-  { icon: Settings,        label: 'Settings',         to: '/settings' },
+  { icon: Settings, label: 'Settings', to: '/settings' },
 ];
 
 export default function Sidebar({ collapsed }) {
@@ -77,7 +90,14 @@ export default function Sidebar({ collapsed }) {
   }, []);
 
   const isEmployee = currentUser?.role === 'employee';
-  const navList = isEmployee ? EMPLOYEE_NAV : ADMIN_NAV;
+  const isSupervisor = currentUser?.role === 'supervisor' || currentUser?.role === 'manager';
+
+  const navList = isEmployee
+    ? EMPLOYEE_NAV
+    : isSupervisor
+    ? SUPERVISOR_NAV
+    : ADMIN_NAV;
+
   const { themeId } = useTheme();
   const isLightSidebar = themeId === 'white';
 
@@ -87,6 +107,28 @@ export default function Sidebar({ collapsed }) {
 
   const isParentActive = (children) =>
     children?.some(c => location.pathname.startsWith(c.to));
+
+  // ─── Handle click on a nav item — block out-of-scope items ───
+  const handleNavClick = (e, item) => {
+    if (!isInScope(item.to)) {
+      e.preventDefault();
+      triggerPlannedFeatureModal(item.label);
+    }
+  };
+
+  const handleSubClick = (e, child) => {
+    if (!isInScope(child.to)) {
+      e.preventDefault();
+      triggerPlannedFeatureModal(child.label);
+    }
+  };
+
+  // Role label for sidebar tag
+  const roleLabel = isEmployee
+    ? 'Employee Self-Service'
+    : isSupervisor
+    ? 'Supervisor – Team Oversight'
+    : 'Enterprise Admin';
 
   return (
     <aside className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''}`}>
@@ -99,7 +141,7 @@ export default function Sidebar({ collapsed }) {
       {!collapsed && (
         <div className={`sidebar__role-tag ${isLightSidebar ? 'sidebar__role-tag--light' : ''}`}>
           <UserCheck size={13} />
-          <span>{isEmployee ? 'Employee Self-Service' : 'Enterprise Admin'}</span>
+          <span>{roleLabel}</span>
         </div>
       )}
 
@@ -129,45 +171,86 @@ export default function Sidebar({ collapsed }) {
                 </button>
                 {!collapsed && open && (
                   <div className="sidebar__submenu">
-                    {item.children.map(child => (
-                      <NavLink
-                        key={child.to}
-                        to={child.to}
-                        className={({ isActive }) =>
-                          `sidebar__subitem ${isActive ? 'sidebar__subitem--active' : ''}`
-                        }
-                      >
-                        <child.icon size={14} />
-                        <span>{child.label}</span>
-                      </NavLink>
-                    ))}
+                    {item.children.map(child => {
+                      const inScope = isInScope(child.to);
+                      return inScope ? (
+                        <NavLink
+                          key={child.to}
+                          to={child.to}
+                          className={({ isActive }) =>
+                            `sidebar__subitem ${isActive ? 'sidebar__subitem--active' : ''}`
+                          }
+                        >
+                          <child.icon size={14} />
+                          <span>{child.label}</span>
+                        </NavLink>
+                      ) : (
+                        <button
+                          key={child.to}
+                          type="button"
+                          className="sidebar__subitem sidebar__subitem--disabled"
+                          onClick={(e) => handleSubClick(e, child)}
+                          title={`${child.label} — Yet to be developed`}
+                        >
+                          <child.icon size={14} />
+                          <span>{child.label}</span>
+                          <span className="sidebar__planned-pill">Planned</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
             );
           }
 
+          const inScope = isInScope(item.to);
+
+          if (inScope) {
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                title={collapsed ? item.label : undefined}
+                className={({ isActive }) =>
+                  `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`
+                }
+              >
+                <item.icon size={18} className="sidebar__icon" />
+                {!collapsed && (
+                  <>
+                    <span className="sidebar__label">{item.label}</span>
+                    {item.badge && (
+                      <span className="sidebar__badge" style={item.badge === 'Apply' ? { background: '#10b981', color: '#fff' } : undefined}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </>
+                )}
+              </NavLink>
+            );
+          }
+
+          // Out-of-scope: render disabled button
           return (
-            <NavLink
+            <button
               key={item.to}
-              to={item.to}
-              title={collapsed ? item.label : undefined}
-              className={({ isActive }) =>
-                `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`
-              }
+              type="button"
+              title={collapsed ? `${item.label} (Planned)` : undefined}
+              className="sidebar__item sidebar__item--disabled"
+              onClick={(e) => handleNavClick(e, item)}
             >
               <item.icon size={18} className="sidebar__icon" />
               {!collapsed && (
                 <>
                   <span className="sidebar__label">{item.label}</span>
-                  {item.badge && (
-                    <span className="sidebar__badge" style={item.badge === 'Apply' ? { background: '#10b981', color: '#fff' } : undefined}>
-                      {item.badge}
-                    </span>
+                  {item.badge && typeof item.badge === 'number' && (
+                    <span className="sidebar__badge">{item.badge}</span>
                   )}
+                  <span className="sidebar__planned-pill">Planned</span>
                 </>
               )}
-            </NavLink>
+            </button>
           );
         })}
       </nav>
@@ -182,6 +265,11 @@ export default function Sidebar({ collapsed }) {
               <>
                 <UserCheck size={12} style={{ color: '#38bdf8' }} />
                 <span>Portal: {currentUser?.empId || 'EMP-2041'}</span>
+              </>
+            ) : isSupervisor ? (
+              <>
+                <Shield size={12} style={{ color: '#4ade80' }} />
+                <span>Supervisor Portal</span>
               </>
             ) : (
               <>

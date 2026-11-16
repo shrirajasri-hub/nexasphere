@@ -11,6 +11,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { getStoredProjects } from '../utils/projectTaskStore';
+import { triggerPlannedFeatureModal } from '../components/YetToBeDevelopedModal';
 import './Dashboard.css';
 
 /* ─── Chart Data ─── */
@@ -110,6 +111,7 @@ export default function Dashboard() {
   }, []);
 
   const isEmployee = currentUser?.role === 'employee';
+  const isSupervisor = currentUser?.role === 'supervisor' || currentUser?.role === 'manager';
 
   return (
     <div className="dash-v2">
@@ -118,21 +120,39 @@ export default function Dashboard() {
         <div className="dash-v2__header-left">
           {/* Pill Tab Bar */}
           <div className="dash-pills-nav">
-            {['Overview', 'Workforce Analytics', 'Project Health'].map(tab => (
-              <button
-                key={tab}
-                className={`dash-pill-btn ${activeTab === tab ? 'dash-pill-btn--active' : ''}`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
+            {['Overview', 'Workforce Analytics', 'Project Health'].map(tab => {
+              const isActiveTab = tab === 'Overview' || tab === 'My Leave Balance';
+              const isCurrent = activeTab === tab;
+              return (
+                <button
+                  key={tab}
+                  className={`dash-pill-btn ${isCurrent ? 'dash-pill-btn--active' : ''}`}
+                  onClick={() => {
+                    if (!isActiveTab) {
+                      triggerPlannedFeatureModal(tab + ' Dashboard Tab');
+                    } else {
+                      setActiveTab(tab);
+                    }
+                  }}
+                  title={!isActiveTab ? `${tab} — Yet to be developed` : tab}
+                >
+                  {tab}
+                  {!isActiveTab && (
+                    <span style={{ fontSize: 9, background: 'rgba(0,0,0,0.08)', padding: '1px 5px', borderRadius: 8, marginLeft: 4, fontWeight: 700 }}>
+                      Planned
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           <div className="dash-v2__title-group">
             <h1 className="dash-v2__welcome">
               {isEmployee
                 ? `Welcome Back, ${currentUser?.name || 'Priya Sundaram'}`
+                : isSupervisor
+                ? `Welcome, ${currentUser?.name || 'Supervisor'}`
                 : 'Welcome Back, Enterprise Admin'
               }
             </h1>
@@ -140,6 +160,8 @@ export default function Dashboard() {
               <span className="dash-v2__pulse" />
               {isEmployee
                 ? `Employee Self-Service · ID: ${currentUser?.empId || 'EMP-2041'} · ${currentUser?.dept || 'Design & UX'}`
+                : isSupervisor
+                ? `Team Supervisor · ${currentUser?.dept || 'Engineering & Technology'} · Leave Approval Hub`
                 : 'System Live · Updated 2 mins ago'
               }
             </span>
@@ -152,16 +174,29 @@ export default function Dashboard() {
               <Link to="/leave?action=apply" className="dash-btn-apply-emp">
                 <Plus size={15} /> Apply For Leave
               </Link>
-              <button className="dash-btn-ghost" title="Today's Biometric Status">
+              <button
+                className="dash-btn-ghost"
+                title="Biometric Attendance — Yet to be developed"
+                onClick={() => triggerPlannedFeatureModal('Biometric Punch In / Attendance Tracking')}
+              >
                 <Clock size={14} /> Punched In: 08:55 AM
               </button>
+            </>
+          ) : isSupervisor ? (
+            <>
+              <Link to="/leave" className="dash-btn-ghost">
+                <SlidersHorizontal size={14} /> Team Leave Hub
+              </Link>
             </>
           ) : (
             <>
               <Link to="/leave" className="dash-btn-ghost">
                 <SlidersHorizontal size={14} /> Leave Hub
               </Link>
-              <button className="dash-btn-dark">
+              <button
+                className="dash-btn-dark"
+                onClick={() => triggerPlannedFeatureModal('Quick Action — Bulk Operations')}
+              >
                 <Zap size={15} /> Quick Action
               </button>
             </>
@@ -335,7 +370,13 @@ export default function Dashboard() {
           </div>
 
           <div className="gauge-footer">
-            <Link to="/attendance" className="dash-link-btn">{isEmployee ? 'View Punch Logs →' : 'See Full Analytics →'}</Link>
+            <button
+              type="button"
+              className="dash-link-btn"
+              onClick={() => triggerPlannedFeatureModal(isEmployee ? 'Punch Logs & Attendance History' : 'Full Attendance Analytics')}
+            >
+              {isEmployee ? 'View Punch Logs →' : 'See Full Analytics →'}
+            </button>
           </div>
         </div>
 
@@ -352,7 +393,13 @@ export default function Dashboard() {
                 <h3 className="dash-card__title">My Active Projects</h3>
                 <p className="dash-card__sub">Projects and tasks assigned to Priya Sundaram</p>
               </div>
-              <Link to="/projects" className="dash-link-btn">View My Projects →</Link>
+              <button
+                type="button"
+                className="dash-link-btn"
+                onClick={() => triggerPlannedFeatureModal('My Projects & Active Deliverables')}
+              >
+                View My Projects →
+              </button>
             </div>
 
             <div className="ph-list">
@@ -429,7 +476,13 @@ export default function Dashboard() {
               <h3 className="dash-card__title">Project Health Tracker</h3>
               <p className="dash-card__sub">Overall status of active client deliverables</p>
             </div>
-            <Link to="/projects" className="dash-link-btn">View All Projects →</Link>
+            <button
+              type="button"
+              className="dash-link-btn"
+              onClick={() => triggerPlannedFeatureModal('Projects & Milestones Tracker')}
+            >
+              View All Projects →
+            </button>
           </div>
 
           <div className="ph-list">
@@ -513,7 +566,13 @@ export default function Dashboard() {
                 <h3 className="dash-card__title">Upcoming Team Leaves</h3>
                 <p className="dash-card__sub">Approved & pending workforce absences</p>
               </div>
-              <Link to="/leave" className="dash-link-btn">Full Calendar →</Link>
+              <button
+                type="button"
+                className="dash-link-btn"
+                onClick={() => triggerPlannedFeatureModal('Full Team Leave Calendar')}
+              >
+                Full Calendar →
+              </button>
             </div>
 
             <div className="team-leave-list">
@@ -543,7 +602,13 @@ export default function Dashboard() {
               <h3 className="dash-card__title">Live System Activity</h3>
               <p className="dash-card__sub">Real-time audit & notification stream</p>
             </div>
-            <button className="dash-link-btn">Audit Log →</button>
+            <button
+              type="button"
+              className="dash-link-btn"
+              onClick={() => triggerPlannedFeatureModal('Audit Log & System Activity Feed')}
+            >
+              Audit Log →
+            </button>
           </div>
 
           <div className="activity-stream">

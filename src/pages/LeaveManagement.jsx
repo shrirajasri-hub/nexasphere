@@ -5,8 +5,9 @@ import {
   UploadCloud, Paperclip, Trash2, CheckCircle2,
   Clock, User, X, Volume2, Sparkles, Eye,
   PhoneCall, FileCheck2, AlertTriangle, Lock, ShieldAlert,
-  ArrowLeft
+  ArrowLeft, Edit2
 } from 'lucide-react';
+import { triggerPlannedFeatureModal } from '../components/YetToBeDevelopedModal';
 import './LeaveManagement.css';
 
 const ALL_STAFF_MEMBERS = [
@@ -17,6 +18,35 @@ const ALL_STAFF_MEMBERS = [
   { empId: 'EMP-3012', name: 'Meena Ramesh', dept: 'Quality Assurance', manager: 'Senthil Nathan (QA Head)' },
   { empId: 'EMP-2098', name: 'Vignesh M.', dept: 'Maintenance', manager: 'Suresh Babu (Operations)' }
 ];
+
+// Helper to determine if a leave request belongs to an employee reporting to the given supervisor
+const isReportingToSupervisor = (req, supervisorUser) => {
+  if (!supervisorUser) return false;
+  const supName = (supervisorUser.name || '').toLowerCase();
+  const supFirst = supName.split(' ')[0]; // e.g. "vikram" or "sarah"
+  const reqMgr = (req.manager || '').toLowerCase();
+
+  // Match manager string
+  if (supFirst && reqMgr && reqMgr.includes(supFirst)) return true;
+
+  // Match staff registry
+  const matchStaff = ALL_STAFF_MEMBERS.find(
+    s => s.empId === req.empId || s.name.toLowerCase() === (req.employeeName || '').toLowerCase()
+  );
+  if (matchStaff && matchStaff.manager && supFirst && matchStaff.manager.toLowerCase().includes(supFirst)) {
+    return true;
+  }
+
+  // Fallback for Vikram Malhotra (Engineering / Design supervisor)
+  if (supFirst === 'vikram') {
+    const teamIds = ['EMP-2041', 'EMP00101', 'EMP-1082', 'EMP-3012', 'EMP-2098'];
+    const teamNames = ['priya sundaram', 'aarav sharma', 'arun kumar'];
+    if (teamIds.includes(req.empId) || teamNames.includes((req.employeeName || '').toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const INITIAL_REQUESTS = [
   {
@@ -189,6 +219,22 @@ export default function LeaveManagement() {
   const [regHandover, setRegHandover] = useState('Arun Kumar');
   const [regEmergencyPhone, setRegEmergencyPhone] = useState('+91 98450 67890');
   const [regAttachment, setRegAttachment] = useState(null);
+
+  // Edit Pending Leave Application State
+  const [editingRequest, setEditingRequest] = useState(null);
+  const [editLeaveType, setEditLeaveType] = useState('Sick Leave (SL)');
+  const [editDuration, setEditDuration] = useState('Full Day');
+  const [editFromDate, setEditFromDate] = useState('');
+  const [editToDate, setEditToDate] = useState('');
+  const [editReason, setEditReason] = useState('');
+  const [editHandover, setEditHandover] = useState('');
+  const [editEmergencyPhone, setEditEmergencyPhone] = useState('');
+  const [editAttachment, setEditAttachment] = useState(null);
+  const [editFormErrors, setEditFormErrors] = useState({});
+  const editFileInputRef = useRef(null);
+
+  // Supervisor Team View & Filter State
+  const [supervisorFilter, setSupervisorFilter] = useState('All Submissions');
   // Form State initialized with logged-in user details
   const [employeeName, setEmployeeName] = useState(currentUser.name || 'Priya Sundaram');
   const [employeeId, setEmployeeId] = useState(currentUser.empId || 'EMP-2041');
@@ -602,7 +648,112 @@ export default function LeaveManagement() {
     setTimeout(() => setToastMessage(''), 6000);
   };
 
+  // ─── Employee Leave Edit Handlers ───
+  const handleOpenEdit = (req) => {
+    if (req.status !== 'Pending Approval') {
+      alert('Only applications with "Pending Approval" status can be edited.');
+      return;
+    }
+    setEditingRequest(req);
+    setEditLeaveType(req.leaveType || 'Sick Leave (SL)');
+    setEditDuration(req.duration || 'Full Day');
+    setEditFromDate(req.fromDate || '');
+    setEditToDate(req.toDate || '');
+    setEditReason(req.reason || '');
+    setEditHandover(req.handoverTo || '');
+    setEditEmergencyPhone(req.emergencyPhone || '');
+    setEditAttachment(req.attachmentName ? { name: req.attachmentName, size: req.attachmentSize || 'Uploaded' } : null);
+    setEditFormErrors({});
+  };
+
+  const calculateEditDays = () => {
+    if (!editFromDate || !editToDate) return 1;
+    const start = new Date(editFromDate);
+    const end = new Date(editToDate);
+    if (isNaN(start) || isNaN(end) || end < start) return 1;
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return editDuration.includes('Half') ? 0.5 : diffDays;
+  };
+
+  const handleEditFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size exceeds the 10MB limit.');
+        return;
+      }
+      setEditAttachment({
+        name: file.name,
+        size: `${(file.size / 1024).toFixed(1)} KB`
+      });
+    }
+  };
+
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    const errors = {};
+    if (!editLeaveType) errors.leaveType = 'Please select a leave type';
+    if (!editFromDate) errors.fromDate = 'Start Date is required';
+    if (!editToDate) errors.toDate = 'End Date is required';
+    if (editFromDate && editToDate && new Date(editToDate) < new Date(editFromDate)) {
+      errors.toDate = 'End date cannot be earlier than start date';
+    }
+    if (!editReason.trim()) errors.reason = 'Please provide a reason';
+    if (!editHandover.trim()) errors.handoverTo = 'Handover colleague is required';
+    if (!editEmergencyPhone.trim()) errors.emergencyPhone = 'Emergency contact is required';
+
+    if (Object.keys(errors).length > 0) {
+      setEditFormErrors(errors);
+      return;
+    }
+
+    const calculatedDaysCount = calculateEditDays();
+    const originalReq = editingRequest;
+
+    const updated = submittedRequests.map(r => {
+      if (r.id === originalReq.id) {
+        return {
+          ...r,
+          leaveType: editLeaveType,
+          duration: editDuration,
+          fromDate: editFromDate,
+          toDate: editToDate,
+          dates: editFromDate === editToDate ? editFromDate : `${editFromDate} to ${editToDate}`,
+          days: calculatedDaysCount,
+          reason: editReason.trim(),
+          handoverTo: editHandover.trim(),
+          emergencyPhone: editEmergencyPhone.trim(),
+          attachmentName: editAttachment ? editAttachment.name : null,
+          attachmentSize: editAttachment ? editAttachment.size : null
+        };
+      }
+      return r;
+    });
+
+    persistRequests(updated);
+
+    // Recalculate balance if needed
+    if (originalReq.leaveType !== editLeaveType || originalReq.days !== calculatedDaysCount) {
+      setBalances(prev => prev.map(b => {
+        let currentUsed = b.used;
+        if (originalReq.leaveType.toLowerCase().includes(b.id)) {
+          currentUsed = Math.max(0, currentUsed - originalReq.days);
+        }
+        if (editLeaveType.toLowerCase().includes(b.id)) {
+          currentUsed = Math.min(b.allocated, currentUsed + calculatedDaysCount);
+        }
+        return { ...b, used: currentUsed };
+      }));
+    }
+
+    setToastMessage(`Leave request ${originalReq.id} updated successfully!`);
+    setTimeout(() => setToastMessage(''), 4500);
+    setEditingRequest(null);
+  };
+
   const isEmployee = currentUser?.role === 'employee';
+  const isSupervisor = currentUser?.role === 'supervisor' || currentUser?.role === 'manager';
 
   const myRequests = submittedRequests.filter(req =>
     req.empId === currentUser?.empId ||
@@ -610,12 +761,25 @@ export default function LeaveManagement() {
     (currentUser?.name && req.employeeName.toLowerCase().includes(currentUser.name.toLowerCase().split(' ')[0]))
   );
 
+  const supervisorTeamRequests = submittedRequests.filter(req =>
+    isReportingToSupervisor(req, currentUser)
+  );
+
+  const supervisorFilteredRequests = supervisorTeamRequests.filter(req => {
+    if (supervisorFilter === 'Pending My Approval') return req.status === 'Pending Approval';
+    if (supervisorFilter === 'Approved') return req.status === 'Approved' || req.status === 'Approved (Regularised)';
+    if (supervisorFilter === 'Rejected') return req.status === 'Rejected';
+    return true; // All Submissions
+  });
+
   const pendingBlockedRequests = myRequests.filter(req =>
     req.status === 'Dates Blocked (Pending Regularisation)' && !req.regularised
   );
 
   const displayedRequests = isEmployee
     ? myRequests
+    : isSupervisor
+    ? supervisorFilteredRequests
     : submittedRequests;
 
   return (
@@ -633,11 +797,18 @@ export default function LeaveManagement() {
       <div className="leave-header">
         <div>
           <h1 className="leave-title">
-            {showApplyForm ? 'Apply for Leave' : 'Leave Management System'}
+            {showApplyForm
+              ? 'Apply for Leave'
+              : isSupervisor
+              ? 'Supervisor Leave Approvals & Team Oversight'
+              : 'Leave Management System'
+            }
           </h1>
           <p className="leave-sub">
             {showApplyForm
               ? 'Complete the form below to submit a new leave request application'
+              : isSupervisor
+              ? `Review, approve and track leave requests for direct reports under ${currentUser?.name || 'your supervision'}`
               : 'Configure leave policies, view real-time balances, and manage workforce requests'
             }
           </p>
@@ -653,7 +824,7 @@ export default function LeaveManagement() {
             </button>
           ) : (
             <>
-              {!isEmployee && (
+              {!isEmployee && !isSupervisor && (
                 <button
                   type="button"
                   className="leave-btn-block-manager"
@@ -663,7 +834,13 @@ export default function LeaveManagement() {
                   <PhoneCall size={14} /> Block Leave for Employee (Emergency Call)
                 </button>
               )}
-              <button className="leave-btn-outline"><Download size={14} /> Export Policy</button>
+              <button
+                type="button"
+                className="leave-btn-outline"
+                onClick={() => triggerPlannedFeatureModal('Export Leave Policy & Reports')}
+              >
+                <Download size={14} /> Export Policy
+              </button>
               <button className="leave-btn-primary" onClick={() => setShowApplyForm(true)}>
                 <Plus size={15} /> Apply for Leave
               </button>
@@ -1107,11 +1284,18 @@ export default function LeaveManagement() {
             <div className="leave-table-card__header">
               <div>
                 <h3 className="leave-table-card__title">
-                  {isEmployee ? 'My Leave Applications & History' : 'Leave Requests & Approvals Queue'}
+                  {isEmployee
+                    ? 'My Leave Applications & History'
+                    : isSupervisor
+                    ? 'Supervisor Leave Approvals Queue (Direct Reportees)'
+                    : 'Leave Requests & Approvals Queue'
+                  }
                 </h3>
                 <p className="leave-table-card__sub">
                   {isEmployee
                     ? 'Your personal leave submissions, approval status & audit trail'
+                    : isSupervisor
+                    ? `Showing leave requests submitted by team members reporting to ${currentUser?.name || 'you'}`
                     : 'Real-time workflow approval queue across departments'
                   }
                 </p>
@@ -1121,6 +1305,10 @@ export default function LeaveManagement() {
                   <div className="leave-filter-pill">
                     <Filter size={12} /> My Records ({myRequests.length})
                   </div>
+                ) : isSupervisor ? (
+                  <div className="leave-filter-pill" style={{ background: '#f0fdf4', color: '#166534', borderColor: '#bbf7d0' }}>
+                    <Users size={12} /> Team Submissions ({supervisorTeamRequests.length})
+                  </div>
                 ) : (
                   <div className="leave-filter-pill">
                     <Filter size={12} /> Total Records ({submittedRequests.length})
@@ -1128,6 +1316,32 @@ export default function LeaveManagement() {
                 )}
               </div>
             </div>
+
+            {isSupervisor && (
+              <div style={{ padding: '0 24px 16px', borderBottom: '1px solid #f1f5f9' }}>
+                <div className="supervisor-filter-bar">
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--t-text-muted, #64748b)', marginRight: 4 }}>
+                    Team Status Filters:
+                  </span>
+                  {[
+                    { key: 'Pending My Approval', label: 'Pending My Approval', count: supervisorTeamRequests.filter(r => r.status === 'Pending Approval').length },
+                    { key: 'Approved', label: 'Approved', count: supervisorTeamRequests.filter(r => r.status === 'Approved' || r.status === 'Approved (Regularised)').length },
+                    { key: 'Rejected', label: 'Rejected', count: supervisorTeamRequests.filter(r => r.status === 'Rejected').length },
+                    { key: 'All Submissions', label: 'All Submissions', count: supervisorTeamRequests.length },
+                  ].map(tab => (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      className={`supervisor-chip ${supervisorFilter === tab.key ? 'supervisor-chip--active' : ''}`}
+                      onClick={() => setSupervisorFilter(tab.key)}
+                    >
+                      <span>{tab.label}</span>
+                      <span className="supervisor-chip-count">{tab.count}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="leave-table-responsive">
               <table className="leave-custom-table">
@@ -1244,14 +1458,24 @@ export default function LeaveManagement() {
                                 <Eye size={12} /> Details
                               </button>
                               {req.status === 'Pending Approval' && (
-                                <button
-                                  type="button"
-                                  className="btn-withdraw"
-                                  onClick={() => handleWithdrawRequest(req.id)}
-                                  title="Withdraw this pending request"
-                                >
-                                  <Trash2 size={12} /> Withdraw
-                                </button>
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn-edit-leave"
+                                    onClick={() => handleOpenEdit(req)}
+                                    title="Edit this pending leave application"
+                                  >
+                                    <Edit2 size={12} /> Edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn-withdraw"
+                                    onClick={() => handleWithdrawRequest(req.id)}
+                                    title="Withdraw this pending request"
+                                  >
+                                    <Trash2 size={12} /> Withdraw
+                                  </button>
+                                </>
                               )}
                             </div>
                           ) : (
@@ -1660,16 +1884,235 @@ export default function LeaveManagement() {
                 Close
               </button>
               {isEmployee && selectedRequest.status === 'Pending Approval' && (
-                <button
-                  type="button"
-                  className="btn-withdraw"
-                  style={{ padding: '8px 14px', fontSize: 13 }}
-                  onClick={() => handleWithdrawRequest(selectedRequest.id)}
-                >
-                  <Trash2 size={14} /> Withdraw Application
-                </button>
+                <>
+                  <button
+                    type="button"
+                    className="btn-edit-leave"
+                    style={{ padding: '8px 14px', fontSize: 13 }}
+                    onClick={() => {
+                      const req = selectedRequest;
+                      setSelectedRequest(null);
+                      handleOpenEdit(req);
+                    }}
+                  >
+                    <Edit2 size={13} /> Edit Application
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-withdraw"
+                    style={{ padding: '8px 14px', fontSize: 13 }}
+                    onClick={() => handleWithdrawRequest(selectedRequest.id)}
+                  >
+                    <Trash2 size={14} /> Withdraw Application
+                  </button>
+                </>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Employee Edit Leave Application Modal ─── */}
+      {editingRequest && (
+        <div className="leave-modal-backdrop" onClick={() => setEditingRequest(null)}>
+          <div className="leave-edit-modal" onClick={e => e.stopPropagation()}>
+            <div className="leave-edit-header">
+              <div className="leave-edit-icon-wrap">
+                <Edit2 size={20} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--t-text-title, #0f172a)' }}>
+                  Edit Pending Leave Application
+                </h3>
+                <p style={{ margin: 0, fontSize: 12, color: 'var(--t-text-muted, #64748b)' }}>
+                  Ref: <strong>{editingRequest.id}</strong> · Modify your application before manager decision
+                </p>
+              </div>
+              <button
+                type="button"
+                className="leave-modal-close"
+                onClick={() => setEditingRequest(null)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit}>
+              <div className="leave-edit-body">
+                <div className="leave-edit-meta-banner">
+                  <div>
+                    <span>Applicant: </span>
+                    <strong>{editingRequest.employeeName} ({editingRequest.empId})</strong>
+                  </div>
+                  <div>
+                    <span>Dept: </span>
+                    <strong>{editingRequest.department}</strong>
+                  </div>
+                  <div>
+                    <span>Status: </span>
+                    <span className="status-pill status-pending" style={{ fontSize: 11, padding: '2px 8px' }}>
+                      {editingRequest.status}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="leave-form-grid" style={{ marginTop: 4 }}>
+                  <div className="leave-field">
+                    <label>Leave Type <span className="req-star">*</span></label>
+                    <select
+                      className={`leave-select ${editFormErrors.leaveType ? 'input-error' : ''}`}
+                      value={editLeaveType}
+                      onChange={e => setEditLeaveType(e.target.value)}
+                    >
+                      <option value="Casual Leave (CL)">Casual Leave (CL)</option>
+                      <option value="Sick Leave (SL)">Sick Leave (SL)</option>
+                      <option value="Earned Leave (EL)">Earned Leave (EL)</option>
+                      <option value="Maternity/Paternity">Maternity/Paternity</option>
+                      <option value="Compensatory Off">Compensatory Off</option>
+                    </select>
+                    {editFormErrors.leaveType && <span className="err-msg">{editFormErrors.leaveType}</span>}
+                  </div>
+
+                  <div className="leave-field">
+                    <label>Duration Mode <span className="req-star">*</span></label>
+                    <select
+                      className="leave-select"
+                      value={editDuration}
+                      onChange={e => setEditDuration(e.target.value)}
+                    >
+                      <option value="Full Day">Full Day</option>
+                      <option value="Half Day - First Half">Half Day - First Half</option>
+                      <option value="Half Day - Second Half">Half Day - Second Half</option>
+                    </select>
+                  </div>
+
+                  <div className="leave-field">
+                    <label>From Date <span className="req-star">*</span></label>
+                    <input
+                      type="date"
+                      className={`leave-input ${editFormErrors.fromDate ? 'input-error' : ''}`}
+                      value={editFromDate}
+                      onChange={e => setEditFromDate(e.target.value)}
+                    />
+                    {editFormErrors.fromDate && <span className="err-msg">{editFormErrors.fromDate}</span>}
+                  </div>
+
+                  <div className="leave-field">
+                    <label>To Date <span className="req-star">*</span></label>
+                    <input
+                      type="date"
+                      className={`leave-input ${editFormErrors.toDate ? 'input-error' : ''}`}
+                      value={editToDate}
+                      min={editFromDate}
+                      onChange={e => setEditToDate(e.target.value)}
+                    />
+                    {editFormErrors.toDate && <span className="err-msg">{editFormErrors.toDate}</span>}
+                  </div>
+                </div>
+
+                <div style={{ background: '#f1f5f9', padding: '10px 14px', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>Recalculated Duration:</span>
+                  <span style={{ fontWeight: 700, color: 'var(--t-primary, #059669)', fontSize: 14 }}>
+                    {calculateEditDays()} {calculateEditDays() === 1 ? 'Day' : 'Days'} ({editDuration})
+                  </span>
+                </div>
+
+                <div className="leave-field">
+                  <label>Reason for Leave <span className="req-star">*</span></label>
+                  <textarea
+                    rows={3}
+                    className={`leave-textarea ${editFormErrors.reason ? 'input-error' : ''}`}
+                    value={editReason}
+                    onChange={e => setEditReason(e.target.value)}
+                    placeholder="Provide justification or reason for this leave application..."
+                  />
+                  {editFormErrors.reason && <span className="err-msg">{editFormErrors.reason}</span>}
+                </div>
+
+                <div className="leave-form-grid">
+                  <div className="leave-field">
+                    <label>Work Handover Colleague <span className="req-star">*</span></label>
+                    <input
+                      type="text"
+                      className={`leave-input ${editFormErrors.handoverTo ? 'input-error' : ''}`}
+                      value={editHandover}
+                      onChange={e => setEditHandover(e.target.value)}
+                      placeholder="Colleague taking over tasks"
+                    />
+                    {editFormErrors.handoverTo && <span className="err-msg">{editFormErrors.handoverTo}</span>}
+                  </div>
+
+                  <div className="leave-field">
+                    <label>Emergency Contact Phone <span className="req-star">*</span></label>
+                    <input
+                      type="text"
+                      className={`leave-input ${editFormErrors.emergencyPhone ? 'input-error' : ''}`}
+                      value={editEmergencyPhone}
+                      onChange={e => setEditEmergencyPhone(e.target.value)}
+                      placeholder="+91 98765 43210"
+                    />
+                    {editFormErrors.emergencyPhone && <span className="err-msg">{editFormErrors.emergencyPhone}</span>}
+                  </div>
+                </div>
+
+                <div className="leave-field">
+                  <label>Supporting Document / Attachment</label>
+                  {editAttachment ? (
+                    <div className="file-preview-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Paperclip size={15} color="#2563eb" />
+                        <span style={{ fontSize: 13, fontWeight: 600 }}>{editAttachment.name}</span>
+                        <span style={{ fontSize: 11, color: '#64748b' }}>({editAttachment.size})</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditAttachment(null);
+                          if (editFileInputRef.current) editFileInputRef.current.value = '';
+                        }}
+                        style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#ef4444' }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <input
+                        type="file"
+                        ref={editFileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={handleEditFileChange}
+                      />
+                      <button
+                        type="button"
+                        className="leave-btn-outline"
+                        style={{ width: '100%', justifyContent: 'center' }}
+                        onClick={() => editFileInputRef.current?.click()}
+                      >
+                        <UploadCloud size={14} /> Upload New Document / Prescription
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="leave-details-footer" style={{ borderTop: '1px solid #e2e8f0', padding: '14px 24px', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button
+                  type="button"
+                  className="dash-btn-ghost"
+                  onClick={() => setEditingRequest(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="leave-btn-primary"
+                  style={{ minWidth: 130 }}
+                >
+                  <CheckCircle2 size={15} /> Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -20,6 +20,20 @@ const DEMO_ROLES = [
     designation: 'Senior Product Designer'
   },
   {
+    key: 'supervisor',
+    title: 'Team Supervisor',
+    sub: 'Team Leave Approval & Oversight',
+    icon: '🛡️',
+    bg: '#f0fdf4',
+    color: '#16a34a',
+    email: 'vikram.m@nexasphere.io',
+    name: 'Vikram Malhotra',
+    role: 'supervisor',
+    empId: 'EMP-1002',
+    dept: 'Engineering & Technology',
+    designation: 'VP Technology & Team Supervisor'
+  },
+  {
     key: 'admin',
     title: 'Super Admin',
     sub: 'Executive & Organization Hub',

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // Employees that have a full profile dossier (see pages/EmployeeProfile.jsx)
@@ -9,8 +9,10 @@ import {
   X, Camera, Save, Users, UserCheck, UserX, Briefcase,
   Phone, Mail, MapPin, Building2, Shield,
   FileText, CreditCard, Clock, ChevronDown, CheckCircle2,
-  AlertTriangle, Lock
+  AlertTriangle, Lock, ShieldAlert
 } from 'lucide-react';
+import { getStoredEmployees, saveStoredEmployees } from '../../utils/employeeStore';
+import { triggerPlannedFeatureModal } from '../../components/YetToBeDevelopedModal';
 import './EmployeeMaster.css';
 
 /* ─ Tabs for Add/Edit form ─ */
@@ -37,75 +39,6 @@ const TABLE_COLUMNS = [
 /* ─ Department filter options ─ */
 const DEPARTMENTS = ['All Departments', 'Engineering', 'HR', 'Finance', 'Sales', 'Operations', 'Quality', 'Maintenance', 'Design', 'Production'];
 const STATUSES    = ['All Status', 'Active', 'Inactive', 'Probation', 'Terminated'];
-
-const INITIAL_EMPLOYEES = [
-  {
-    id: 'EMP00101',
-    firstName: 'Aarav',
-    lastName: 'Sharma',
-    fullName: 'Aarav Sharma',
-    gender: 'Male',
-    dob: '1992-06-15',
-    bloodGroup: 'O+',
-    maritalStatus: 'Married',
-    nationality: 'Indian',
-    designation: 'Senior Lead Architect',
-    department: 'Engineering',
-    branch: 'Headquarters (Bangalore)',
-    doj: '2023-04-10',
-    status: 'Active',
-    workEmail: 'aarav.sharma@nexasphere.com',
-    personalEmail: 'aarav.personal@gmail.com',
-    phone: '+91 98450 12345',
-    emergencyContactName: 'Ananya Sharma (Spouse)',
-    emergencyPhone: '+91 98450 99881',
-    currentAddress: '42, Indiranagar 100ft Road, Bangalore, Karnataka',
-    bankName: 'HDFC Bank',
-    branchName: 'Indiranagar Branch',
-    accountNumber: '50100492819201',
-    ifscCode: 'HDFC0001042',
-    accountType: 'Savings',
-    panNumber: 'ABCPS1234K',
-    uanNumber: '100928374615',
-    esiNumber: '310928374615001',
-    role: 'Engineering Lead',
-    portalAccess: 'Enabled',
-    reportingManager: 'Vikram Malhotra (VP Tech)'
-  },
-  {
-    id: 'EMP00102',
-    firstName: 'Priya',
-    lastName: 'Patel',
-    fullName: 'Priya Patel',
-    gender: 'Female',
-    dob: '1995-11-20',
-    bloodGroup: 'B+',
-    maritalStatus: 'Single',
-    nationality: 'Indian',
-    designation: 'HR Operations Lead',
-    department: 'HR',
-    branch: 'Headquarters (Bangalore)',
-    doj: '2024-01-15',
-    status: 'Active',
-    workEmail: 'priya.patel@nexasphere.com',
-    personalEmail: 'priya.p@gmail.com',
-    phone: '+91 98112 55443',
-    emergencyContactName: 'Rajesh Patel (Father)',
-    emergencyPhone: '+91 98112 99887',
-    currentAddress: '78, Koramangala 4th Block, Bangalore, Karnataka',
-    bankName: 'ICICI Bank',
-    branchName: 'Koramangala Branch',
-    accountNumber: '001205018294',
-    ifscCode: 'ICIC0000012',
-    accountType: 'Savings',
-    panNumber: 'BKRPA9876M',
-    uanNumber: '100874512984',
-    esiNumber: '310874512984001',
-    role: 'HR Manager',
-    portalAccess: 'Enabled',
-    reportingManager: 'Sarah Jenkins (Director)'
-  }
-];
 
 const DEFAULT_FORM_DATA = {
   id: '',
@@ -141,7 +74,41 @@ const DEFAULT_FORM_DATA = {
 };
 
 export default function EmployeeMaster() {
-  const [employees, setEmployees] = useState(INITIAL_EMPLOYEES);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('nexa_auth');
+      return saved ? JSON.parse(saved) : { role: 'admin', name: 'Enterprise Admin', empId: 'ADM-0001' };
+    } catch {
+      return { role: 'admin', name: 'Enterprise Admin', empId: 'ADM-0001' };
+    }
+  });
+
+  useEffect(() => {
+    const handleAuth = () => {
+      try {
+        const saved = localStorage.getItem('nexa_auth');
+        if (saved) setCurrentUser(JSON.parse(saved));
+      } catch {}
+    };
+    window.addEventListener('nexa_role_change', handleAuth);
+    window.addEventListener('storage', handleAuth);
+    return () => {
+      window.removeEventListener('nexa_role_change', handleAuth);
+      window.removeEventListener('storage', handleAuth);
+    };
+  }, []);
+
+  const [employees, setEmployees] = useState(() => getStoredEmployees());
+
+  // Listen for cross-tab or cross-component employee updates
+  useEffect(() => {
+    const handleSync = () => {
+      setEmployees(getStoredEmployees());
+    };
+    window.addEventListener('nexa_employees_updated', handleSync);
+    return () => window.removeEventListener('nexa_employees_updated', handleSync);
+  }, []);
+
   const [showForm, setShowForm]   = useState(false);
   const [formTab, setFormTab]     = useState('personal');
   const [searchQ, setSearchQ]     = useState('');
@@ -221,10 +188,14 @@ export default function EmployeeMaster() {
     };
 
     if (formMode === 'add') {
-      setEmployees([compiledEmployee, ...employees]);
+      const next = [compiledEmployee, ...employees];
+      setEmployees(next);
+      saveStoredEmployees(next);
       showToast(`Employee ${compiledEmployee.fullName} (${compiledEmployee.id}) added successfully!`);
     } else {
-      setEmployees(employees.map(emp => emp.id === compiledEmployee.id ? compiledEmployee : emp));
+      const next = employees.map(emp => emp.id === compiledEmployee.id ? compiledEmployee : emp);
+      setEmployees(next);
+      saveStoredEmployees(next);
       showToast(`Employee record for ${compiledEmployee.fullName} updated successfully!`);
     }
 
@@ -233,14 +204,18 @@ export default function EmployeeMaster() {
 
   // Delete Logic Handlers
   const handleDeactivate = (empId) => {
-    setEmployees(employees.map(emp => emp.id === empId ? { ...emp, status: 'Inactive' } : emp));
+    const next = employees.map(emp => emp.id === empId ? { ...emp, status: 'Inactive' } : emp);
+    setEmployees(next);
+    saveStoredEmployees(next);
     showToast(`Employee ${deletingEmployee?.fullName} deactivated. Historical attendance & leave records preserved for audit compliance.`);
     setDeletingEmployee(null);
     setConfirmPermanent(false);
   };
 
   const handlePermanentDelete = (empId) => {
-    setEmployees(employees.filter(emp => emp.id !== empId));
+    const next = employees.filter(emp => emp.id !== empId);
+    setEmployees(next);
+    saveStoredEmployees(next);
     showToast(`Employee ${deletingEmployee?.fullName} (${empId}) permanently removed from database.`);
     setDeletingEmployee(null);
     setConfirmPermanent(false);
@@ -265,6 +240,31 @@ export default function EmployeeMaster() {
   const activeCount    = employees.filter(e => e.status === 'Active').length;
   const probationCount = employees.filter(e => e.status === 'Probation').length;
   const inactiveCount  = employees.filter(e => e.status === 'Inactive' || e.status === 'Terminated').length;
+
+  // Role-based Page Protection: Only Admin / HR authorized
+  const isAuthorizedRole = currentUser?.role === 'admin' || currentUser?.role === 'hr';
+  if (!isAuthorizedRole) {
+    return (
+      <div className="emp-restricted-page">
+        <div className="emp-restricted-card">
+          <div className="emp-restricted-icon-wrap">
+            <ShieldAlert size={38} color="#dc2626" />
+          </div>
+          <h2>Access Restricted</h2>
+          <span className="emp-restricted-badge">Admin & HR Authorization Required</span>
+          <p className="emp-restricted-desc">
+            You are currently signed in as <strong>{currentUser?.name || 'User'}</strong> ({currentUser?.role === 'supervisor' ? 'Team Supervisor' : 'Employee Self-Service'}). 
+            Access to the Employee Master registry is restricted to authorized Enterprise Admin and HR Operations roles.
+          </p>
+          <div className="emp-restricted-actions">
+            <Link to="/dashboard" className="emp-btn emp-btn--primary">
+              Return to My Dashboard
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const dynamicStats = [
     { icon: Users,     label: 'Total Employees', count: totalCount,     color: '#2563eb', bg: '#eff6ff' },
@@ -376,10 +376,18 @@ export default function EmployeeMaster() {
             </button>
           </div>
 
-          <button className="emp-btn emp-btn--ghost">
+          <button
+            className="emp-btn emp-btn--ghost"
+            onClick={() => triggerPlannedFeatureModal('Bulk Employee Import (Excel / CSV)')}
+            title="Bulk import employee data"
+          >
             <Upload size={14} /> Import
           </button>
-          <button className="emp-btn emp-btn--ghost">
+          <button
+            className="emp-btn emp-btn--ghost"
+            onClick={() => triggerPlannedFeatureModal('Employee Master Export (CSV / Excel)')}
+            title="Export master records"
+          >
             <Download size={14} /> Export
           </button>
           <button className="emp-btn emp-btn--primary" onClick={openAdd}>
